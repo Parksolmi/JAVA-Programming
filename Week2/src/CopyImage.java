@@ -37,15 +37,14 @@ public class CopyImage {
 			try
 			{
 				fis.close();
+				long endTime = System.currentTimeMillis(); //끝난 시간 밀리세컨드 단위로 불러옴
+				System.out.println("FileInput/Output Stream 실행 시간 : " + (endTime - startTime));
 			}
 			catch(Exception e)
 			{ 
 				
 			}
 		}
-		long endTime = System.currentTimeMillis(); //끝난 시간 밀리세컨드 단위로 불러옴
-		
-		System.out.println("FileInput/Output Stream 실행 시간 : " + (endTime - startTime)); //13352
 		
 		//2. BufferedInputStream/OutputStream으로 jpg파일 읽어서 복사하기
 		BufferedInputStream bis = null;
@@ -63,7 +62,7 @@ public class CopyImage {
 			
 			while((c=bis.read())!=-1) //파일이 끝날 때까지
 			{
-				fos.write(c);
+				bos.write(c);
 			}
 		}
 		
@@ -85,14 +84,13 @@ public class CopyImage {
 			try
 			{
 				bis.close();
+				long endTime = System.currentTimeMillis(); //끝난 시간 밀리세컨드 단위로 불러옴
+				System.out.println("BufferedInput/Output Stream 실행 시간 : " + (endTime - startTime));
 			}
 			catch(Exception e)
 			{ 
 				
 			}
 		}
-		endTime = System.currentTimeMillis(); //끝난 시간 밀리세컨드 단위로 불러옴
-		
-		System.out.println("BufferedInput/Output Stream 실행 시간 : " + (endTime - startTime));
 	}
 }
