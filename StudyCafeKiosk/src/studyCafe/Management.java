@@ -1,9 +1,10 @@
 package studyCafe;
 
 import java.io.*;
+import java.util.ArrayList;
 
 public class Management {
-	Room[] roomTable = new Room[100]; //방 객체를 담는 배열
+	ArrayList<Room> roomTable = new ArrayList<Room>(); //방 객체를 담는 리스트
 	int count = 0; //현재 배열이 어디까지 차 있는지 나타내는 변수
 	private String managerID; //관리자UI로 들어가기 위한 관리자ID
 	
@@ -254,12 +255,15 @@ public class Management {
 		return userPay;
 	}
 	
-	void writeRoomInfo(DataOutputStream do)
+	//방 정보 입력 - Room클래스에서 받아와서 쓰기
+	void writeRoomInfo(FileOutputStream fos) throws IOException
 	{
-		do.writeInt(count);
+		DataOutputStream dos = new DataOutputStream(fos);
+		
+		dos.writeInt(count);
 		for(Room room:roomTable)
 		{
-			room.writeRoomInfo(do);
+			room.writeRoomInfo(fos);
 		}
 	}
 	

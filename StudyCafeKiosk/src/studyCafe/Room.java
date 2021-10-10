@@ -12,6 +12,7 @@ public class Room {
 	private int capacity; //방 하나 당 최대 수용인원
 	private int pricePerHour; //시간 당 방가격
 	private GregorianCalendar startTime; //입실 날짜
+	String showCheckInTime; //체크인 시간(정해진 포맷에 맞춰 보여줌)
 	private GregorianCalendar endTime; //퇴실 날짜
 	private int usedTime; //이용시간 (단위:시간)
 	private int pay; //지불할 금액을 저장하는 변수
@@ -88,7 +89,7 @@ public class Room {
 		startTime = new GregorianCalendar();
 		//시작 시간 포맷 설정
 		SimpleDateFormat dateFormat = new SimpleDateFormat("MM월 dd일 aa hh시 mm분 ss초");
-		String showCheckInTime = dateFormat.format(startTime.getTime());
+		showCheckInTime = dateFormat.format(startTime.getTime());
 		return showCheckInTime; // 입실 시간 사용자에게 보여주기 위해 return
 	}
 	//체크아웃
@@ -108,6 +109,7 @@ public class Room {
 		return showCheckOutTime; // 퇴실 시간 사용자에게 보여주기 위해 return
 	}
 
+	//사용시간계산
 	private int calacUsedTime()
 	{
 		//일 계산
@@ -155,12 +157,22 @@ public class Room {
 		return userPay;
 	}
 	
-	//management에서 호출
-	void writeRoomInfo(DataOutputStream Do)
+	//방 정보 입력
+	void writeRoomInfo(FileOutputStream fos) throws IOException
 	{
-		Do.writeInt(capacity);
-		Do.writeUTF(user.getUserPhoneNum());
-		Do.writeUTF(user.getUserName());
+		DataOutputStream dos = new DataOutputStream(fos);
+		ObjectOutputStream oos = new ObjectOutputStream(fos);
+		
+		dos.writeInt(capacity); dos.writeChars(" / "); //수용인원
+		dos.writeInt(pricePerHour); dos.writeChars(" / "); //시간당가격
+		oos.writeObject(startTime); dos.writeChars(" / "); //입실시간
+		dos.writeBoolean(using); dos.writeChars(" / "); //사용여부
+		if(using)
+		{
+			dos.writeUTF(user.getUserName() + " / "); //사용자 이름
+			dos.writeUTF(user.getUserPhoneNum() + " . "); //사용자 번호
+		}
 	}
+	
 	
 }
