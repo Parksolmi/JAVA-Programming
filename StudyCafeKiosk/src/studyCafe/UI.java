@@ -8,12 +8,28 @@ public class UI
 		
 		Scanner sc = new Scanner(System.in); // scanner객체 생성
 		Management mg = new Management("manager001"); // management객체 생성
+		File roomInfoFile = new File("studyCafeRoom.txt");
 		FileOutputStream roomInfoOut = null;
 		FileInputStream roomInfoIn = null;
 		
+		if(!roomInfoFile.exists())
+		{
+			try
+			{
+				// 방 정보를 저장할 파일 생성
+				roomInfoOut = new FileOutputStream("studyCafeRoom.txt");
+			}
+			catch (FileNotFoundException fnfe) {
+				System.out.println("The file could not be found.");
+			} 
+			catch (IOException ioe) {
+				System.out.println("The file cannot be read.");
+			} 
+		}
+		
 		try {
 				// 방 정보를 읽어올 파일 불러오기
-				roomInfoIn = new FileInputStream("StudyCafeRoomInfo.txt");
+				roomInfoIn = new FileInputStream("studyCafeRoom.txt");
 				mg.readRoomInfo(roomInfoIn);
 
 			} catch (FileNotFoundException fnfe) {
@@ -285,9 +301,8 @@ public class UI
 				System.out.println();
 			}
 
-			try {
-				// 방 정보를 저장할 파일 생성
-				roomInfoOut = new FileOutputStream("studyCafeRoomInfo.txt");
+			try
+			{
 				// 방 정보 파일에 쓰기
 				mg.writeRoomInfo(roomInfoOut);
 			} catch (FileNotFoundException fnfe) {
