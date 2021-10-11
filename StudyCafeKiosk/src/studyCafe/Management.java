@@ -117,7 +117,7 @@ public class Management {
 	//toString 오버라이딩
 	public String toString(Room room)
 	{
-		return room.getRoomName() + "| \t  " + room.getCapacity() + "\t"
+		return room.getRoomName() + "| \t  " + room.getCapacity() + "\t\t"
 				+ room.getPricePerHour() + "\t " + room.getUsing();
 	}
 	//생성된 전체 방 조회

@@ -76,31 +76,31 @@ public class UI
 							managerMode = true;
 						} else // manager 아이디 불일치
 						{
-							System.out.println("ID가 일치하지 않습니다.");
+							System.out.println("It's a wrong ID.");
 						}
 						break;
 					case 3:
 						systemExit = true;
 						break;
 					default:
-						System.out.println("1~3중에 선택하세요.\n");
+						System.out.println("Choose between 1 and 3\n");
 						break;
 					}
 				} catch (java.util.InputMismatchException ime) // 숫자가 아닌 값을 입력했을 때 예외처리
 				{
-					System.out.println("잘못된 값을 입력하였습니다. 1~3중에 선택하세요.\n");
+					System.out.println("You have entered an invalid value.\n");
 					sc.nextLine(); // 무한 루핑을 막기 위해 입력
 				}
 
 				// User모드-------------------------------------------------------------------------------------
 				while (userMode) {
 					System.out.println();
-					System.out.println("-----사용자 메뉴-----");
-					System.out.println("1. 빈방 검색");
-					System.out.println("2. 입실");
-					System.out.println("3. 퇴실");
-					System.out.println("4. 이전 메뉴로 돌아가기");
-					System.out.println("5. 종료");
+					System.out.println("------User Menu------");
+					System.out.println("1. Search empty room");
+					System.out.println("2. Check-in");
+					System.out.println("3. Check-out");
+					System.out.println("4. Previous Menu");
+					System.out.println("5. Exit");
 					System.out.print("=> ");
 					try {
 						int answerUserMenu = sc.nextInt();
@@ -108,40 +108,40 @@ public class UI
 						switch (answerUserMenu) {
 						case 1: // 빈방 검색
 							try {
-								System.out.print("수용 인원 : "); // 검색 할 수용인원 입력하기
+								System.out.print("The number of users : "); // 검색 할 수용인원 입력하기
 								int capacity = sc.nextInt();
 								mg.searchEmptyRoomByCapacity(capacity);
 							} catch (java.util.InputMismatchException ime) {
-								System.out.print("잘못된 입력 값입니다. 숫자를 입력하세요.");
+								System.out.println("You have entered an invalid value.\nPlease enter the number.");
 							} catch (Exception e) {
 								System.out.println(e.getMessage());
 							}
 							break;
 						case 2: // 입실
 							// 사용자 정보 입력 받기
-							System.out.print("사용자 이름 : ");
+							System.out.print("User Name : ");
 							String userName = sc.next();
-							System.out.print("사용자 전화번호 : ");
+							System.out.print("User Phone number : ");
 							String userPhoneNum = sc.next();
 							User user = new User(userName, userPhoneNum);
 							// 입실할 룸 정보 입력 받기
-							System.out.print("입실할 방 이름 : ");
+							System.out.print("Name of the room to check-in : ");
 							String roomName = sc.next();
 							// 입실하기
 							try {
 								mg.checkIn(roomName, user);
-								System.out.println("입실되었습니다.");
+								System.out.println("Check-in success.");
 							} catch (Exception e) {
-								System.out.println("방을 찾을 수 없습니다.");
+								System.out.println("Cannot find the room.");
 							}
 							break;
 						case 3: // 퇴실
 							// 체크아웃하는 룸의 사용자 정보 조회
-							System.out.print("퇴실할 방 이름 : ");
+							System.out.print("Name of the room to check-out : ");
 							roomName = sc.next();
-							System.out.print("사용자 이름 : ");
+							System.out.print("User Name : ");
 							userName = sc.next();
-							System.out.print("사용자 전화번호 : ");
+							System.out.print("User Phone number : ");
 							userPhoneNum = sc.next();
 
 							boolean checkUser = false;
@@ -154,32 +154,32 @@ public class UI
 							if (checkUser) {
 								mg.showCheckOutTime(roomName);
 								int userPay = mg.pay(roomName);
-								System.out.println("지불 금액 : " + userPay);
-								System.out.print("결제하시겠습니까?\n(동의하면 y 또는 Y를 입력하세요) : ");
+								System.out.println("Payment amount : " + userPay);
+								System.out.print("Do you want to pay?\n(If you agree, please enter 'y' or 'Y'.) : ");
 								String payAnswer = sc.next();
 								if (payAnswer.equals("y") || payAnswer.equals("Y")) {
 									mg.checkOut(roomName);
-									System.out.println("퇴실되었습니다.");
+									System.out.println("Check-out success.");
 								} else
-									System.out.println("퇴실이 취소되었습니다.");
+									System.out.println("Check-out is been canceled.");
 							} else
-								System.out.println("잘못된 사용자 정보입니다.");
+								System.out.println("Wrong user information.");
 							break;
 						case 4: // 이전 메뉴로 돌아가기
 							userMode = false;
 							break;
 						case 5: // 종료
-							System.out.println("이용해주셔서 감사합니다.\n안녕히가세요.");
+							System.out.println("Thank you for using it.\nGoodbye!");
 							systemExit = true;
 							userMode = false;
 							break;
 						default:
-							System.out.println("1~5중에 선택하세요.\n");
+							System.out.println("Choose between 1 and 5.\n");
 							break;
 						}
 					} catch (java.util.InputMismatchException ime) // 숫자가 아닌 값을 입력했을 때 예외처리
 					{
-						System.out.println("잘못된 값을 입력하였습니다. 1~3중에 선택하세요.\n");
+						System.out.println("You have enetered an invalid value.\n");
 					}
 				}
 				System.out.println();
@@ -189,7 +189,7 @@ public class UI
 					System.out.println();
 					System.out.println("-----Manager Menu-----");
 					System.out.println("1. Create a room"); // 방 생성
-					System.out.println("2. Delete a room"); // 방 삭제
+					System.out.println("2. Remove a room"); // 방 삭제
 					System.out.println("3. Revise room info"); // 방 수정
 					System.out.println("4. Check the entire room"); // 전체 방 조회
 					System.out.println("5. Previous menu"); // 이전 메뉴로 돌아가기
@@ -202,80 +202,81 @@ public class UI
 						case 1: // 방 생성
 							try {
 								// 생성할 방 정보 입력
-								System.out.print("생성할 방 이름 : ");
+								System.out.print("Room name to create : ");
 								String roomName = sc.next();
-								System.out.print("생성할 방 수용 인원 : ");
+								System.out.print("Room capacity : ");
 								int capacity = sc.nextInt();
-								System.out.print("생성할 방 시간 당 비용 : ");
+								System.out.print("Price per hour : ");
 								int pricePerHour = sc.nextInt();
 								// 방 생성
 								mg.createRoom(roomName, capacity, pricePerHour);
 							} catch (java.util.InputMismatchException ime) // int형 데이터에 다른 값이 입력되었을 경우 예외처리
 							{
-								System.out.println("잘못된 값을 입력하였습니다. 숫자를 입력하세요.");
+								System.out.println("You have entered an invalid value.");
 								sc.nextLine();
 							}
 
 							break;
 						case 2: // 방 삭제
-							System.out.print("삭제할 방 이름 : ");
+							System.out.print("Room name to remove : ");
 							String roomName = sc.next();
 							mg.removeRoom(roomName);
-							System.out.println(roomName + "룸을 삭제하였습니다.");
+							System.out.println("Successfully remove a " + roomName );
 							break;
 						case 3: // 방 수정
 							// 수정 메뉴
-							System.out.println("----수정할 내용----");
-							System.out.println("1. 방 이름");
-							System.out.println("2. 수용 인원");
-							System.out.println("3. 시간 당 가격");
-							System.out.println("4. 이전 메뉴로 돌아가기");
-							System.out.println("5. 종료");
+							System.out.println("-----Modify-----");
+							System.out.println("1. Room name");
+							System.out.println("2. Room capacity");
+							System.out.println("3. Price per hour");
+							System.out.println("4. Previous menu");
+							System.out.println("5. Exit");
 							System.out.print("=> ");
 							int fixMenu = sc.nextInt();
 
 							switch (fixMenu) // 예외 처리는 아직 구현하지 않음.
 							{
 							case 1: // 방 이름 수정
-								System.out.println("수정 전 방 이름 : ");
+								System.out.println("Room name to modify name : ");
 								String orgRoomName = sc.next();
-								System.out.println("방 이름을 무엇으로 변경하시겠습니까? : ");
+								System.out.println("New room name : ");
 								String changedRoomName = sc.next();
 								mg.changeRoomName(orgRoomName, changedRoomName);
-								System.out.println(orgRoomName + "이 " + changedRoomName + "으로 방 이름이 변경되었습니다.");
+								System.out.println(orgRoomName + " is changed to " + changedRoomName + ".");
 								break;
 							case 2: // 방 수용 인원 수정
-								System.out.println("최대 수용 인원을 수정할 방 이름 : ");
+								System.out.println("Room name to modify capacity : ");
 								roomName = sc.next();
 								int orgCapacity = mg.howManyCapacity(roomName);
-								System.out.println(roomName + "의 수정 전 최대 수용 인원은 " + orgCapacity + "입니다.");
-								System.out.println("최대 수용 인원을 몇 명으로 변경하시겠습니까? : ");
+								System.out.println("The capacity of" + roomName + " before modify is " + orgCapacity + ".");
+								System.out.println("How many do you want to change? : ");
 								int changedCapacity = sc.nextInt();
 								mg.changeCapacity(roomName, changedCapacity);
-								System.out.println(roomName + "의 최대 수용 인원이 " + changedCapacity + "으로 변경되었습니다.");
+								System.out.println("The capacity of " + roomName + " is changed to " + changedCapacity + ".");
 								break;
 							case 3: // 시간 당 가격 수정
-								System.out.println("시간 당 가격을 수정할 방 이름 : ");
+								System.out.println("Room name to modify price : ");
 								roomName = sc.next();
 								int orgPricePerHour = mg.howMuchPrice(roomName);
-								System.out.println(roomName + "의 수정 전 비용은 " + orgPricePerHour + "입니다.");
-								System.out.println("얼마로 변경하시겠습니까? : ");
+								System.out.println("The price of " + roomName + " before modify is " + orgPricePerHour + ".");
+								System.out.println("How much do you want to change? : ");
 								int changedPricePerHour = sc.nextInt();
 								mg.changePricePerHour(roomName, changedPricePerHour);
-								System.out.println(roomName + "의 시간 당 비용이 " + changedPricePerHour + "으로 변경되었습니다.");
+								System.out.println("The price per hour of " + roomName + " is changed to "
+													+ changedPricePerHour + ".");
 								break;
 							case 4: // 이전 메뉴로 돌아가기
 								break;
 							case 5: // 종료하기
-								System.out.println("프로그램을 종료합니다.");
+								System.out.println("Exit the Program.");
 								managerMode = false;
 								systemExit = true;
 								break;
 							}
 							break; // case3의 break문
 						case 4: // 전체 방 조회
-							System.out.println("방 이름\t 인원\t 가격\t 사용여부");
-							System.out.println("---------------------------------");
+							System.out.println("Name\t Capacity\tPrice\t Using");
+							System.out.println("----------------------------------------");
 							try {
 								mg.checkAllCreatedRoom(); // 전체 방 조회
 							} catch (Exception e) {
@@ -294,7 +295,7 @@ public class UI
 						}
 					} catch (java.util.InputMismatchException ime) // 숫자가 아닌 값을 입력했을 때 예외처리
 					{
-						System.out.println("잘못된 값을 입력하였습니다. 1~3중에 선택하세요.\n");
+						System.out.println("You have entered an invalid value.\n");
 						sc.nextLine();
 					}
 				}
