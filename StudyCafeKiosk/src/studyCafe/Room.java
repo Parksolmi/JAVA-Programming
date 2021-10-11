@@ -7,7 +7,6 @@ import java.io.*;
 
 public class Room {
 	private User user; //사용중인 사용자 객체
-	private Management mg; //매니지먼트 객체 생성
 	private String roomName; //방이름
 	private int capacity; //방 하나 당 최대 수용인원
 	private int pricePerHour; //시간 당 방가격
@@ -15,9 +14,7 @@ public class Room {
 	String showCheckInTime; //체크인 시간(정해진 포맷에 맞춰 보여줌)
 	private GregorianCalendar endTime; //퇴실 날짜
 	private int usedTime; //이용시간 (단위:시간)
-	private int pay; //지불할 금액을 저장하는 변수
 	private boolean using; //사용여부
-	
 	
 	private boolean Reserve; //예약여부
 	private int reserveTime; //예약시간
@@ -100,7 +97,7 @@ public class Room {
 	}
 	
 	//체크아웃 시간
-	public String checkOutTime()
+	public String getCheckOutTime()
 	{
 		endTime = new GregorianCalendar();
 		// 퇴실 시간 포맷 설정
@@ -158,21 +155,39 @@ public class Room {
 	}
 	
 	//방 정보 입력
-	void writeRoomInfo(FileOutputStream fos) throws IOException
+	void writeRoomInfo(FileOutputStream fos) throws Exception
 	{
 		DataOutputStream dos = new DataOutputStream(fos);
 		ObjectOutputStream oos = new ObjectOutputStream(fos);
 		
-		dos.writeInt(capacity); dos.writeChars(" / "); //수용인원
-		dos.writeInt(pricePerHour); dos.writeChars(" / "); //시간당가격
-		oos.writeObject(startTime); dos.writeChars(" / "); //입실시간
-		dos.writeBoolean(using); dos.writeChars(" / "); //사용여부
+		dos.writeUTF(roomName); //방이름
+		dos.writeInt(capacity); //수용인원
+		dos.writeInt(pricePerHour); //시간당가격
+		dos.writeBoolean(using); //사용여부
 		if(using)
 		{
-			dos.writeUTF(user.getUserName() + " / "); //사용자 이름
-			dos.writeUTF(user.getUserPhoneNum() + " . "); //사용자 번호
+			oos.writeObject(startTime); //입실시간
+			dos.writeUTF(user.getUserName()); //사용자 이름
+			dos.writeUTF(user.getUserPhoneNum()); //사용자 번호
 		}
 	}
 	
+	//방 정보 읽기
+	void readRoomInfo(FileInputStream fis) throws Exception
+	{
+		DataInputStream dis = new DataInputStream(fis);
+		ObjectInputStream ois = new ObjectInputStream(fis);
+		
+		roomName = dis.readUTF();
+		capacity = dis.readInt();
+		pricePerHour = dis.readInt();
+		using = dis.readBoolean();
+		if(using)
+		{
+			startTime = (GregorianCalendar) ois.readObject();
+			user.setUserName(dis.readUTF());
+			user.setUserPhoneNum(dis.readUTF());
+		}
+	}
 	
 }
