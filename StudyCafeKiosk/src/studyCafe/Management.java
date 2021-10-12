@@ -27,7 +27,7 @@ public class Management {
 		else return false;
 	}
 
-	// roomTable에서 해당 룸 이름을 가진 방의 index를 찾는 함수
+	// roomTable에서 해당 룸 이름을 가진 방의 index를 찾는 함수 - 수정
 	public int findRoom(String roomName) throws Exception 
 	{
 		roomTableSize = roomTable.size();
@@ -44,7 +44,7 @@ public class Management {
 		
 		if (roomIndex == -1) 
 		{
-			throw new Exception("There is no room named " + roomName + ".");
+			throw new Exception("There is no room named " + roomName + "."); //메세지길게하지말기
 		}
 
 		return roomIndex;
@@ -113,7 +113,7 @@ public class Management {
 		return roomTable.get(roomIndex).getPricePerHour();
 	}
 	
-	
+	//수정 : 출력문 - UI
 	//toString 오버라이딩
 	public String toString(Room room)
 	{
@@ -121,7 +121,7 @@ public class Management {
 				+ room.getPricePerHour() + "\t " + room.getUsing();
 	}
 	//생성된 전체 방 조회
-	public void checkAllCreatedRoom()
+	public void checkAllCreatedRoom() //룸을 리턴
 	{
 		roomTableSize = roomTable.size();
 		for(int index = 0; index<roomTableSize; index++)
@@ -133,7 +133,7 @@ public class Management {
 	//User 기능---------------------------------------------------------------------------------------
 	
 	//수용 인원(capacity)으로 빈 방 검색하기
-	public void searchEmptyRoomByCapacity(int capacity) throws Exception
+	public void searchEmptyRoomByCapacity(int capacity) throws Exception //수정 : Arraylist/Array 반환
 	{
 		roomTableSize = roomTable.size(); //roomTable의 크기
 		
@@ -173,7 +173,7 @@ public class Management {
 		int roomIndex = findRoom(roomName);
 		//체크인하기
 		String showCheckInTime = roomTable.get(roomIndex).checkIn(user);
-		System.out.println(showCheckInTime); //입실시간 사용자에게 보여주기
+		System.out.println(showCheckInTime); //입실시간 사용자에게 보여주기 - 수정 : 시간 객체를 넘겨주기
 	}
 
 	// 체크아웃 사용자 정보 확인
@@ -205,7 +205,7 @@ public class Management {
 	public void showCheckOutTime(String roomName) throws Exception
 	{
 		// 방찾기
-		int roomIndex = findRoom(roomName);
+		int roomIndex = findRoom(roomName); //수정 - 방을 못 찾았을 때 : 프로그램 유지되도록(try-catch)
 
 		String showCheckOutTime = roomTable.get(roomIndex).getCheckOutTime();
 		System.out.println(showCheckOutTime); //퇴실시간 사용자에게 보여줌
@@ -240,12 +240,12 @@ public class Management {
 		DataInputStream dis = new DataInputStream(fis);
 		
 		roomTableSize = dis.readInt();
-		System.out.println("Currently, " + roomTableSize + " rooms are created.");
+		System.out.println("Currently, " + roomTableSize + " rooms are created."); //빼기
 		System.out.println();
 		
 		for(int index=0; index<roomTableSize; index++)
 		{
-			Room room = new Room("temp", 0, 0);
+			Room room = new Room("temp", 0, 0, "empty", "empty");
 			roomTable.add(room);
 			roomTable.get(index).readRoomInfo(fis);
 		}

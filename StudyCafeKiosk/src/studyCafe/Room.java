@@ -6,7 +6,7 @@ import java.util.Calendar;
 import java.io.*;
 
 public class Room {
-	private User user; //사용중인 사용자 객체
+	private User user = new User("", ""); //사용중인 사용자 객체
 	private String roomName; //방이름
 	private int capacity; //방 하나 당 최대 수용인원
 	private int pricePerHour; //시간 당 방가격
@@ -25,6 +25,15 @@ public class Room {
 		this.roomName = roomName;
 		this.capacity = capacity;
 		this.pricePerHour = pricePerHour;
+	}
+	Room(String roomName, int capacity, int pricePerHour, 
+			String userName, String userPhoneNum)
+	{
+		this.roomName = roomName;
+		this.capacity = capacity;
+		this.pricePerHour = pricePerHour;
+		user.setUserName(userName);
+		user.setUserPhoneNum(userPhoneNum);
 	}
 	
 	//getter함수

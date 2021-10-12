@@ -241,7 +241,7 @@ public class UI
 								String orgRoomName = sc.next();
 								System.out.println("New room name : ");
 								String changedRoomName = sc.next();
-								mg.changeRoomName(orgRoomName, changedRoomName);
+								mg.changeRoomName(orgRoomName, changedRoomName); //수정 : try-catch문
 								System.out.println(orgRoomName + " is changed to " + changedRoomName + ".");
 								break;
 							case 2: // 방 수용 인원 수정
@@ -304,6 +304,7 @@ public class UI
 
 			try
 			{
+				roomInfoOut = new FileOutputStream("studyCafeRoom.txt");
 				// 방 정보 파일에 쓰기
 				mg.writeRoomInfo(roomInfoOut);
 			} catch (FileNotFoundException fnfe) {
