@@ -21,22 +21,22 @@ public class UI
 			}
 			catch (FileNotFoundException fnfe) {
 				System.out.println("The file could not be found.");
-			} 
-			catch (IOException ioe) {
-				System.out.println("The file cannot be read.");
-			} 
+			}
 		}
 		
 		try {
 				// 방 정보를 읽어올 파일 불러오기
 				roomInfoIn = new FileInputStream("studyCafeRoom.txt");
 				mg.readRoomInfo(roomInfoIn);
-
+				int numberOfRooms = mg.getRoomTableSize();
+				System.out.println("Currently, " + numberOfRooms + " rooms are created.");
+				System.out.println();
+				
 			} catch (FileNotFoundException fnfe) {
 				System.out.println("The file could not be found."); // 파일을 찾을 수 없음
 				System.out.println();
 			} catch (EOFException eofe) {
-				System.out.println("There is no room created."); // 파일이 비어있음
+				System.out.println("The file is empty"); // 파일이 비어있음
 				System.out.println();
 			} catch (IOException ioe) {
 				System.out.println("The file cannot be read."); // 파일을 읽어올 수 없음
@@ -126,20 +126,20 @@ public class UI
 							}
 							
 							//수용 인원(Capacity)으로 찾은 빈 방 리스트 출력하기
-							mg.searchEmptyRoomByCapacity(capacity);
-							System.out.println("Name\t Capacity\t Price");
+							emptyRoomTable = mg.searchEmptyRoomByCapacity(capacity);
+							System.out.println("Name\t Capacity\tPrice");
 							System.out.println("---------------------------------");
 							
 							if(emptyRoomTable.isEmpty()) //빈 방 리스트가 비었을 때
 							{
-								System.out.println("There are no empty room");
+								System.out.println("There is no empty room");
 								break;
 							}
 							else
 							{
 								for(Room room:emptyRoomTable)
 								{
-									System.out.println(mg.toString(room));
+									System.out.println(mg.toStringForEmpty(room));
 								}
 								break;
 							}
@@ -159,8 +159,18 @@ public class UI
 							// 입실하기
 							try 
 							{
-								mg.checkIn(roomName, user);
-								System.out.println("Check-in success.");
+								if(mg.checkIn(roomName, user))
+								{
+									String checkInTime = mg.showCheckInTime(roomName);
+									System.out.println();
+									System.out.println("Check-in time : " + checkInTime);
+									System.out.println("Check-in success.");
+								}
+								else
+								{
+									System.out.println();
+									System.out.println("This room is using.");
+								}
 							} 
 							catch (IndexOutOfBoundsException ioe) 
 							{
@@ -192,8 +202,13 @@ public class UI
 							{
 								try
 								{
+									String checkInTime = mg.showCheckInTime(roomName);
 									String checkOutTime = mg.showCheckOutTime(roomName);
+									
+									System.out.println();
+									System.out.println("Check-in time : " + checkInTime);
 									System.out.println("Check-out time : " + checkOutTime);
+									System.out.println();
 									
 									userPay = mg.pay(roomName);
 								}
@@ -215,10 +230,14 @@ public class UI
 									{
 										System.out.println("There is no room named " + roomName);
 									}
+									System.out.println();
 									System.out.println("Check-out success.");
 								} 
 								else //결제를 승락하지 않은 경우
+								{
+									System.out.println();
 									System.out.println("Check-out is been canceled.");
+								}
 							} 
 							else //사용자 정보가 일치하지 않을 경우
 								System.out.println("Wrong user information.");
@@ -304,9 +323,9 @@ public class UI
 							switch (fixMenu) // 예외 처리는 아직 구현하지 않음.
 							{
 							case 1: // 방 이름 수정
-								System.out.println("Room name to modify name : ");
+								System.out.print("Room name to modify name : ");
 								String orgRoomName = sc.next();
-								System.out.println("New room name : ");
+								System.out.print("New room name : ");
 								String changedRoomName = sc.next();
 								try {
 									mg.changeRoomName(orgRoomName, changedRoomName);
@@ -319,7 +338,7 @@ public class UI
 								break;
 								
 							case 2: // 방 수용 인원 수정
-								System.out.println("Room name to modify capacity : ");
+								System.out.print("Room name to modify capacity : ");
 								roomName = sc.next();
 								int orgCapacity = -1; //원래 인원
 								int changedCapacity = -1; //변경된 인원
@@ -328,7 +347,7 @@ public class UI
 									orgCapacity = mg.howManyCapacity(roomName);
 									System.out.println("The capacity of" + roomName + " before modify is "
 														+ orgCapacity + ".");
-									System.out.println("How many do you want to change? : ");
+									System.out.print("How many do you want to change? : ");
 									changedCapacity = sc.nextInt();
 									
 									mg.changeCapacity(roomName, changedCapacity);
@@ -342,7 +361,7 @@ public class UI
 								break;
 								
 							case 3: // 시간 당 가격 수정
-								System.out.println("Room name to modify price : ");
+								System.out.print("Room name to modify price : ");
 								roomName = sc.next();
 								int orgPricePerHour = -1; //원래 가격
 								int changedPricePerHour = -1; //변경된 가격
@@ -351,7 +370,7 @@ public class UI
 									orgPricePerHour = mg.howMuchPrice(roomName);
 									System.out.println("The price of " + roomName + " before modify is "
 														+ orgPricePerHour + ".");
-									System.out.println("How much do you want to change? : ");
+									System.out.print("How much do you want to change? : ");
 									changedPricePerHour = sc.nextInt();
 									
 									mg.changePricePerHour(roomName, changedPricePerHour);
@@ -376,8 +395,8 @@ public class UI
 							break; // case3의 break문
 							
 						case 4: // 전체 방 조회
-							System.out.println("Name\t Capacity\tPrice\t Using");
-							System.out.println("----------------------------------------");
+							System.out.println("Name\tCapacity   Price   Using   User   Phone");
+							System.out.println("-------------------------------------------------");
 							
 							ArrayList<Room> roomTable = new ArrayList<Room>();
 							
@@ -390,7 +409,7 @@ public class UI
 							{
 								for(Room room:roomTable)
 								{
-									System.out.println(mg.toString(room));
+									System.out.println(mg.toStringForAll(room));
 								}
 							}
 							break;

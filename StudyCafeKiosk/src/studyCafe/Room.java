@@ -83,11 +83,24 @@ public class Room {
 	}
 	
 	//체크인
-	public String checkIn(User user)
+	public boolean checkIn(User user)
 	{
-		this.user = user;
-		setUsing(true);
-		startTime = new GregorianCalendar();
+		if(!getUsing()) //사용중이 아닐 때
+		{
+			this.user = user;
+			setUsing(true);
+			this.startTime = new GregorianCalendar();
+			return true;
+		}
+		else //사용중일 때
+		{
+			return false;
+		}
+		
+	}
+	//체크인 시간
+	public String getCheckInTime()
+	{
 		//시작 시간 포맷 설정
 		SimpleDateFormat dateFormat = new SimpleDateFormat("MM월 dd일 aa hh시 mm분 ss초");
 		showCheckInTime = dateFormat.format(startTime.getTime());
@@ -103,7 +116,7 @@ public class Room {
 	//체크아웃 시간
 	public String getCheckOutTime()
 	{
-		endTime = new GregorianCalendar();
+		this.endTime = new GregorianCalendar();
 		// 퇴실 시간 포맷 설정
 		SimpleDateFormat dateFormat = new SimpleDateFormat("MM월 dd일 aa hh시 mm분 ss초");
 		String showCheckOutTime = dateFormat.format(endTime.getTime());

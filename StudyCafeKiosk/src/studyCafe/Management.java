@@ -20,6 +20,10 @@ public class Management {
 	{
 		
 	}
+	public int getRoomTableSize()
+	{
+		return roomTableSize;
+	}
 	//managerID검사하는 함수
 	boolean checkManagerID(String managerID)
 	{
@@ -93,10 +97,17 @@ public class Management {
 	
 	
 	//toString 오버라이딩
-	public String toString(Room room)
+	public String toStringForAll(Room room)
+	{
+		return room.getRoomName() + "| \t  " + room.getCapacity() + "\t   "
+				+ room.getPricePerHour() + "\t   " + room.getUsing() + "\t   "
+				+ room.getUser().getUserName() + "\t   "
+				+ room.getUser().getUserPhoneNum();
+	}
+	public String toStringForEmpty(Room room)
 	{
 		return room.getRoomName() + "| \t  " + room.getCapacity() + "\t\t"
-				+ room.getPricePerHour() + "\t " + room.getUsing();
+				+ room.getPricePerHour();
 	}
 	//생성된 전체 방 조회
 	public ArrayList<Room> checkAllCreatedRoom()
@@ -126,35 +137,24 @@ public class Management {
 	
 	
 	// 체크인
-	public String checkIn(String roomName, User user) throws Exception 
+	public boolean checkIn(String roomName, User user) throws Exception 
 	{
 		// 방찾기
 		int roomIndex = searchRoom(roomName);
 		//체크인하기
-		String showCheckInTime = roomTable.get(roomIndex).checkIn(user);
-		return showCheckInTime; //사용자에게 입실 시간 보여주기
+		boolean result = roomTable.get(roomIndex).checkIn(user);
+		
+		return result;
 	}
-
-	// 체크아웃 사용자 정보 확인
-	public boolean isRightCheckOutUser(String roomName, String userName,
-										String userPhoneNum) throws Exception 
+	//체크인시간 보여주기
+	public String showCheckInTime(String roomName) throws Exception
 	{
 		// 방찾기
 		int roomIndex = searchRoom(roomName);
 		
-		// 사용자 정보 비교
-		User user = roomTable.get(roomIndex).getUser();
-		if (user.getUserName().equals(userName) 
-				&& user.getUserPhoneNum().equals(userPhoneNum)) 
-		{
-			return true; // 사용자 정보 일치
-		}
-		else
-		{
-			return false; // 사용자 정보 불일치
-		}
+		String showCheckInTime = roomTable.get(roomIndex).getCheckInTime();
+		return showCheckInTime; //입실시간 사용자에게 보여줌
 	}
-
 	// 체크아웃
 	public void checkOut(String roomName) throws Exception 
 	{
@@ -171,6 +171,25 @@ public class Management {
 		String showCheckOutTime = roomTable.get(roomIndex).getCheckOutTime();
 		return showCheckOutTime; //퇴실시간 사용자에게 보여줌
 	}
+	// 체크아웃 사용자 정보 확인
+		public boolean isRightCheckOutUser(String roomName, String userName,
+											String userPhoneNum) throws Exception 
+		{
+			// 방찾기
+			int roomIndex = searchRoom(roomName);
+			
+			// 사용자 정보 비교
+			User user = roomTable.get(roomIndex).getUser();
+			if (user.getUserName().equals(userName) 
+					&& user.getUserPhoneNum().equals(userPhoneNum)) 
+			{
+				return true; // 사용자 정보 일치
+			}
+			else
+			{
+				return false; // 사용자 정보 불일치
+			}
+		}
 	
 	//결제하기
 	public int pay(String roomName) throws Exception
@@ -202,9 +221,6 @@ public class Management {
 		DataInputStream dis = new DataInputStream(fis);
 		
 		roomTableSize = dis.readInt();
-		System.out.println("Currently, " + roomTableSize + " rooms are created."); //빼기
-		System.out.println();
-		
 		for(int index=0; index<roomTableSize; index++)
 		{
 			Room room = new Room();
