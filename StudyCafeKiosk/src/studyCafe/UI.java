@@ -1,6 +1,6 @@
 package studyCafe;
 import java.io.*;
-import java.util.Scanner;
+import java.util.*;
 
 public class UI 
 {
@@ -93,7 +93,8 @@ public class UI
 				}
 
 				// User모드-------------------------------------------------------------------------------------
-				while (userMode) {
+				while (userMode) 
+				{
 					System.out.println();
 					System.out.println("------User Menu------");
 					System.out.println("1. Search empty room");
@@ -102,21 +103,47 @@ public class UI
 					System.out.println("4. Previous Menu");
 					System.out.println("5. Exit");
 					System.out.print("=> ");
-					try {
+					try 
+					{
 						int answerUserMenu = sc.nextInt();
 
-						switch (answerUserMenu) {
+						switch (answerUserMenu) 
+						{
 						case 1: // 빈방 검색
-							try {
+							//빈 방 리스트를 저장할 변수
+							ArrayList<Room> emptyRoomTable = new ArrayList<Room>();
+							int capacity = -1; //검색할 인원
+							
+							try 
+							{
 								System.out.print("The number of users : "); // 검색 할 수용인원 입력하기
-								int capacity = sc.nextInt();
-								mg.searchEmptyRoomByCapacity(capacity);
-							} catch (java.util.InputMismatchException ime) {
+								capacity = sc.nextInt();
+								
+							} 
+							catch (InputMismatchException ime) 
+							{
 								System.out.println("You have entered an invalid value.\nPlease enter the number.");
-							} catch (Exception e) {
-								System.out.println(e.getMessage());
 							}
-							break;
+							
+							//수용 인원(Capacity)으로 찾은 빈 방 리스트 출력하기
+							mg.searchEmptyRoomByCapacity(capacity);
+							System.out.println("Name\t Capacity\t Price");
+							System.out.println("---------------------------------");
+							
+							if(emptyRoomTable.isEmpty()) //빈 방 리스트가 비었을 때
+							{
+								System.out.println("There are no empty room");
+								break;
+							}
+							else
+							{
+								for(Room room:emptyRoomTable)
+								{
+									System.out.println(mg.toString(room));
+								}
+								break;
+							}
+							
 						case 2: // 입실
 							// 사용자 정보 입력 받기
 							System.out.print("User Name : ");
@@ -124,17 +151,23 @@ public class UI
 							System.out.print("User Phone number : ");
 							String userPhoneNum = sc.next();
 							User user = new User(userName, userPhoneNum);
+							
 							// 입실할 룸 정보 입력 받기
 							System.out.print("Name of the room to check-in : ");
 							String roomName = sc.next();
+							
 							// 입실하기
-							try {
+							try 
+							{
 								mg.checkIn(roomName, user);
 								System.out.println("Check-in success.");
-							} catch (Exception e) {
-								System.out.println("Cannot find the room.");
+							} 
+							catch (IndexOutOfBoundsException ioe) 
+							{
+								System.out.println("There is no room named " + roomName);
 							}
 							break;
+							
 						case 3: // 퇴실
 							// 체크아웃하는 룸의 사용자 정보 조회
 							System.out.print("Name of the room to check-out : ");
@@ -143,31 +176,58 @@ public class UI
 							userName = sc.next();
 							System.out.print("User Phone number : ");
 							userPhoneNum = sc.next();
-
 							boolean checkUser = false;
-							try {
+							try
+							{
 								checkUser = mg.isRightCheckOutUser(roomName, userName, userPhoneNum);
-							} catch (Exception e) {
-								e.getMessage();
 							}
-
-							if (checkUser) {
-								mg.showCheckOutTime(roomName);
-								int userPay = mg.pay(roomName);
+							catch (IndexOutOfBoundsException ioe) 
+							{
+								System.out.println("There is no room named " + roomName);
+							}
+							
+							//퇴실 및 결제
+							int userPay = -1; //결제할 비용
+							if (checkUser)
+							{
+								try
+								{
+									String checkOutTime = mg.showCheckOutTime(roomName);
+									System.out.println("Check-out time : " + checkOutTime);
+									
+									userPay = mg.pay(roomName);
+								}
+								catch (IndexOutOfBoundsException ioe) //해당 방 이름이 없을 경우
+								{
+									System.out.println("There is no room named " + roomName);
+								}
 								System.out.println("Payment amount : " + userPay);
 								System.out.print("Do you want to pay?\n(If you agree, please enter 'y' or 'Y'.) : ");
 								String payAnswer = sc.next();
-								if (payAnswer.equals("y") || payAnswer.equals("Y")) {
-									mg.checkOut(roomName);
+								
+								if (payAnswer.equals("y") || payAnswer.equals("Y")) 
+								{
+									try
+									{	
+										mg.checkOut(roomName);
+									}
+									catch (IndexOutOfBoundsException ioe) //해당 방 이름이 없을 경우
+									{
+										System.out.println("There is no room named " + roomName);
+									}
 									System.out.println("Check-out success.");
-								} else
+								} 
+								else //결제를 승락하지 않은 경우
 									System.out.println("Check-out is been canceled.");
-							} else
+							} 
+							else //사용자 정보가 일치하지 않을 경우
 								System.out.println("Wrong user information.");
 							break;
+							
 						case 4: // 이전 메뉴로 돌아가기
 							userMode = false;
 							break;
+							
 						case 5: // 종료
 							System.out.println("Thank you for using it.\nGoodbye!");
 							systemExit = true;
@@ -191,7 +251,7 @@ public class UI
 					System.out.println("1. Create a room"); // 방 생성
 					System.out.println("2. Remove a room"); // 방 삭제
 					System.out.println("3. Revise room info"); // 방 수정
-					System.out.println("4. Check the entire room"); // 전체 방 조회
+					System.out.println("4. Check the entire rooms"); // 전체 방 조회
 					System.out.println("5. Previous menu"); // 이전 메뉴로 돌아가기
 					System.out.println("6. Exit");
 					System.out.print("=> ");
@@ -210,7 +270,7 @@ public class UI
 								int pricePerHour = sc.nextInt();
 								// 방 생성
 								mg.createRoom(roomName, capacity, pricePerHour);
-							} catch (java.util.InputMismatchException ime) // int형 데이터에 다른 값이 입력되었을 경우 예외처리
+							} catch (InputMismatchException ime) // int형 데이터에 다른 값이 입력되었을 경우 예외처리
 							{
 								System.out.println("You have entered an invalid value.");
 								sc.nextLine();
@@ -220,7 +280,14 @@ public class UI
 						case 2: // 방 삭제
 							System.out.print("Room name to remove : ");
 							String roomName = sc.next();
-							mg.removeRoom(roomName);
+							try
+							{
+								mg.removeRoom(roomName);
+							}
+							catch(IndexOutOfBoundsException ioe)
+							{
+								System.out.println("There is no room named" + roomName);
+							}
 							System.out.println("Successfully remove a " + roomName );
 							break;
 						case 3: // 방 수정
@@ -241,32 +308,65 @@ public class UI
 								String orgRoomName = sc.next();
 								System.out.println("New room name : ");
 								String changedRoomName = sc.next();
-								mg.changeRoomName(orgRoomName, changedRoomName); //수정 : try-catch문
+								try {
+									mg.changeRoomName(orgRoomName, changedRoomName);
+								}
+								catch(IndexOutOfBoundsException ioe) //방이름이 존재하지 않아 인덱스 값이 -1인 경우
+								{
+									System.out.println("There is no room named " + orgRoomName);
+								}
 								System.out.println(orgRoomName + " is changed to " + changedRoomName + ".");
 								break;
+								
 							case 2: // 방 수용 인원 수정
 								System.out.println("Room name to modify capacity : ");
 								roomName = sc.next();
-								int orgCapacity = mg.howManyCapacity(roomName);
-								System.out.println("The capacity of" + roomName + " before modify is " + orgCapacity + ".");
-								System.out.println("How many do you want to change? : ");
-								int changedCapacity = sc.nextInt();
-								mg.changeCapacity(roomName, changedCapacity);
-								System.out.println("The capacity of " + roomName + " is changed to " + changedCapacity + ".");
+								int orgCapacity = -1; //원래 인원
+								int changedCapacity = -1; //변경된 인원
+								
+								try {
+									orgCapacity = mg.howManyCapacity(roomName);
+									System.out.println("The capacity of" + roomName + " before modify is "
+														+ orgCapacity + ".");
+									System.out.println("How many do you want to change? : ");
+									changedCapacity = sc.nextInt();
+									
+									mg.changeCapacity(roomName, changedCapacity);
+								}
+								catch(IndexOutOfBoundsException ioe) //방이름이 존재하지 않아 인덱스 값이 -1인 경우
+								{
+									System.out.println("There is no room named " + roomName);
+								}
+								System.out.println("The capacity of " + roomName + " is changed to "
+													+ changedCapacity + ".");
 								break;
+								
 							case 3: // 시간 당 가격 수정
 								System.out.println("Room name to modify price : ");
 								roomName = sc.next();
-								int orgPricePerHour = mg.howMuchPrice(roomName);
-								System.out.println("The price of " + roomName + " before modify is " + orgPricePerHour + ".");
-								System.out.println("How much do you want to change? : ");
-								int changedPricePerHour = sc.nextInt();
-								mg.changePricePerHour(roomName, changedPricePerHour);
+								int orgPricePerHour = -1; //원래 가격
+								int changedPricePerHour = -1; //변경된 가격
+								
+								try {
+									orgPricePerHour = mg.howMuchPrice(roomName);
+									System.out.println("The price of " + roomName + " before modify is "
+														+ orgPricePerHour + ".");
+									System.out.println("How much do you want to change? : ");
+									changedPricePerHour = sc.nextInt();
+									
+									mg.changePricePerHour(roomName, changedPricePerHour);
+								}
+								catch(IndexOutOfBoundsException ioe) //방이름이 존재하지 않아 인덱스 값이 -1인 경우
+								{
+									System.out.println("There is no room named " + roomName);
+								}
 								System.out.println("The price per hour of " + roomName + " is changed to "
 													+ changedPricePerHour + ".");
 								break;
+								
 							case 4: // 이전 메뉴로 돌아가기
 								break;
+								
 							case 5: // 종료하기
 								System.out.println("Exit the Program.");
 								managerMode = false;
@@ -274,22 +374,36 @@ public class UI
 								break;
 							}
 							break; // case3의 break문
+							
 						case 4: // 전체 방 조회
 							System.out.println("Name\t Capacity\tPrice\t Using");
 							System.out.println("----------------------------------------");
-							try {
-								mg.checkAllCreatedRoom(); // 전체 방 조회
-							} catch (Exception e) {
-								System.out.println(e.getMessage()); // 조회할 방이 없을 때 예외처리
+							
+							ArrayList<Room> roomTable = new ArrayList<Room>();
+							
+							roomTable = mg.checkAllCreatedRoom(); // 전체 방 조회
+							if(roomTable.isEmpty()) // roomTable이 비었을 때
+							{
+								System.out.println("There are no room created.");
+							}
+							else
+							{
+								for(Room room:roomTable)
+								{
+									System.out.println(mg.toString(room));
+								}
 							}
 							break;
+							
 						case 5: // 이전 메뉴로 돌아가기
 							managerMode = false;
 							break;
+							
 						case 6: // 종료
 							systemExit = true;
 							managerMode = false;
 							break;
+							
 						default:
 							break;
 						}

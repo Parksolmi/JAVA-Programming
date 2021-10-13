@@ -26,7 +26,22 @@ public class Management {
 		if(this.managerID.equals(managerID)) return true;
 		else return false;
 	}
-
+	
+	// roomTable에서 해당 룸 이름을 가진 방의 index를 반환하는 함수
+	public int searchRoom(String roomName)
+	{
+		roomTableSize = roomTable.size();
+		for(int index=0; index<roomTableSize; index++)
+		{
+			if(roomTable.get(index).getRoomName().equals(roomName))
+			{
+				return index;
+			}
+		}
+		
+		return -1; //해당 이름을 가진 방이 없을 때
+	}
+	
 	//manager 기능-----------------------------------------------------------------------------------
 	//룸 생성
 	public void createRoom(String roomName, int capacity, int pricePerHour)
@@ -37,60 +52,46 @@ public class Management {
 		roomTable.add(room); //리스트에 룸 저장
 	}
 	//룸 삭제
-	public void removeRoom(String roomName) throws Exception 
+	public void removeRoom(String roomName) throws Exception
 	{
 		//해당 이름을 가진 방의 인덱스 찾아서 삭제
-		int roomIndex = findRoom(roomName);
+		int roomIndex = searchRoom(roomName);
 		roomTable.remove(roomIndex);
-		
-		//삭제할 방을 찾지 못했을 때
-		if(roomIndex == -1)
-		{
-			throw new Exception(roomName + " doesn't exist!");
-		}
 	}
-	
 	
 	//룸 관련 정보 수정
 	//방 이름 수정
 	public void changeRoomName(String orgRoomName, String changedRoomName) throws Exception
 	{
-		int orgRoomIndex = findRoom(orgRoomName);
-		
+		int orgRoomIndex = searchRoom(orgRoomName);
 		roomTable.get(orgRoomIndex).setRoomName(changedRoomName);
 	}
 	//수용 인원 수정
 	public void changeCapacity(String roomName, int changedCapacity) throws Exception
 	{
-		int roomIndex = findRoom(roomName);
-		
+		int roomIndex = searchRoom(roomName);
 		roomTable.get(roomIndex).setCapacity(changedCapacity);
 	}
 	//시간당 가격 수정
 	public void changePricePerHour(String roomName, int changedPricePerHour) throws Exception
 	{
-		int roomIndex = findRoom(roomName);
-		
+		int roomIndex = searchRoom(roomName);
 		roomTable.get(roomIndex).setPricePerHour(changedPricePerHour);
 	}
-	
-	
 	//해당 이름의 방의 capacity값을 반환하는 함수
 	public int howManyCapacity(String roomName) throws Exception
 	{
-		int roomIndex = findRoom(roomName);
-		
+		int roomIndex = searchRoom(roomName);
 		return roomTable.get(roomIndex).getCapacity();
 	}
 	//해당 이름의 방의 가격을 반환하는 함수
 	public int howMuchPrice(String roomName) throws Exception
 	{
-		int roomIndex = findRoom(roomName);
-		
+		int roomIndex = searchRoom(roomName);
 		return roomTable.get(roomIndex).getPricePerHour();
 	}
 	
-	//수정 : 출력문 - UI
+	
 	//toString 오버라이딩
 	public String toString(Room room)
 	{
@@ -98,25 +99,18 @@ public class Management {
 				+ room.getPricePerHour() + "\t " + room.getUsing();
 	}
 	//생성된 전체 방 조회
-	public void checkAllCreatedRoom() //룸을 리턴
+	public ArrayList<Room> checkAllCreatedRoom()
 	{
-		roomTableSize = roomTable.size();
-		for(int index = 0; index<roomTableSize; index++)
-		{
-			System.out.println(toString(roomTable.get(index)));
-		}
+		return roomTable;
 	}
 
 	//User 기능---------------------------------------------------------------------------------------
 	
 	//수용 인원(capacity)으로 빈 방 검색하기
-	public void searchEmptyRoomByCapacity(int capacity) throws Exception //수정 : Arraylist/Array 반환
+	public ArrayList<Room> searchEmptyRoomByCapacity(int capacity)
 	{
 		roomTableSize = roomTable.size(); //roomTable의 크기
-		
 		ArrayList<Room> emptyRoomTable = new ArrayList<Room>(); //roomTable에서 빈 방만 담은 리스트
-		int emptyRoomTableSize = emptyRoomTable.size(); //빈 방 수
-		System.out.println();
 		
 		for(int index = 0; index<roomTableSize; index++)
 		{
@@ -127,37 +121,26 @@ public class Management {
 			}
 		}
 		
-		emptyRoomTableSize = emptyRoomTable.size();
-		if(emptyRoomTableSize == 0)
-		{
-			throw new Exception("There are no vacancies for the number of people.");
-		}
-		
-		//수용 인원(Capacity)으로 찾은 빈 방 출력하기
-		System.out.println("방이름\t 인원\t 가격");
-		System.out.println("---------------------------------");
-		for(int index = 0; index<emptyRoomTableSize; index++)
-		{
-			System.out.println(toString(emptyRoomTable.get(index)));
-		}
+		return emptyRoomTable;
 	}
 	
 	
 	// 체크인
-	public void checkIn(String roomName, User user) throws Exception 
+	public String checkIn(String roomName, User user) throws Exception 
 	{
 		// 방찾기
-		int roomIndex = findRoom(roomName);
+		int roomIndex = searchRoom(roomName);
 		//체크인하기
 		String showCheckInTime = roomTable.get(roomIndex).checkIn(user);
-		System.out.println(showCheckInTime); //입실시간 사용자에게 보여주기 - 수정 : 시간 객체를 넘겨주기
+		return showCheckInTime; //사용자에게 입실 시간 보여주기
 	}
 
 	// 체크아웃 사용자 정보 확인
-	public boolean isRightCheckOutUser(String roomName, String userName, String userPhoneNum) throws Exception 
+	public boolean isRightCheckOutUser(String roomName, String userName,
+										String userPhoneNum) throws Exception 
 	{
 		// 방찾기
-		int roomIndex = findRoom(roomName);
+		int roomIndex = searchRoom(roomName);
 		
 		// 사용자 정보 비교
 		User user = roomTable.get(roomIndex).getUser();
@@ -166,31 +149,33 @@ public class Management {
 		{
 			return true; // 사용자 정보 일치
 		}
-		
-		return false; // 사용자 정보 불일치
+		else
+		{
+			return false; // 사용자 정보 불일치
+		}
 	}
 
 	// 체크아웃
 	public void checkOut(String roomName) throws Exception 
 	{
 		// 방찾기
-		int roomIndex = findRoom(roomName);
+		int roomIndex = searchRoom(roomName);
 		roomTable.get(roomIndex).checkOut();
 	}
-	
 	//체크아웃시간 보여주기
-	public void showCheckOutTime(String roomName) throws Exception
+	public String showCheckOutTime(String roomName) throws Exception
 	{
 		// 방찾기
-		int roomIndex = findRoom(roomName); //수정 - 방을 못 찾았을 때 : 프로그램 유지되도록(try-catch)
+		int roomIndex = searchRoom(roomName);
 
 		String showCheckOutTime = roomTable.get(roomIndex).getCheckOutTime();
-		System.out.println(showCheckOutTime); //퇴실시간 사용자에게 보여줌
+		return showCheckOutTime; //퇴실시간 사용자에게 보여줌
 	}
 	
+	//결제하기
 	public int pay(String roomName) throws Exception
 	{
-		int roomIndex = findRoom(roomName);
+		int roomIndex = searchRoom(roomName);
 		
 		int pricePerHour = roomTable.get(roomIndex).getPricePerHour();
 		int userPay = roomTable.get(roomIndex).pay(pricePerHour);
@@ -222,7 +207,7 @@ public class Management {
 		
 		for(int index=0; index<roomTableSize; index++)
 		{
-			Room room = new Room("temp", 0, 0, "empty", "empty");
+			Room room = new Room();
 			roomTable.add(room);
 			roomTable.get(index).readRoomInfo(fis);
 		}
