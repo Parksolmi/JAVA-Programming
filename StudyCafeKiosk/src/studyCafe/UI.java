@@ -17,7 +17,7 @@ public class UI
 			try
 			{
 				// 방 정보를 저장할 파일 생성
-				roomInfoOut = new FileOutputStream("studyCafeRoom.txt");
+				roomInfoOut = new FileOutputStream(roomInfoFile);
 			}
 			catch (FileNotFoundException fnfe) {
 				System.out.println("The file could not be found.");
@@ -26,7 +26,7 @@ public class UI
 		
 		try {
 				// 방 정보를 읽어올 파일 불러오기
-				roomInfoIn = new FileInputStream("studyCafeRoom.txt");
+				roomInfoIn = new FileInputStream(roomInfoFile);
 				mg.readRoomInfo(roomInfoIn);
 				int numberOfRooms = mg.getRoomTableSize();
 				System.out.println("Currently, " + numberOfRooms + " rooms are created.");
@@ -437,7 +437,7 @@ public class UI
 
 			try
 			{
-				roomInfoOut = new FileOutputStream("studyCafeRoom.txt");
+				roomInfoOut = new FileOutputStream(roomInfoFile);
 				// 방 정보 파일에 쓰기
 				mg.writeRoomInfo(roomInfoOut);
 			} catch (FileNotFoundException fnfe) {

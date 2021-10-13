@@ -207,6 +207,7 @@ public class Management {
 	{
 		DataOutputStream dos = new DataOutputStream(fos);
 		
+		roomTableSize = roomTable.size();
 		dos.writeInt(roomTableSize);
 		for(Room room:roomTable)
 		{

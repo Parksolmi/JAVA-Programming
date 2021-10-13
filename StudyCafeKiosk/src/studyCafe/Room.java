@@ -195,10 +195,10 @@ public class Room {
 		DataInputStream dis = new DataInputStream(fis);
 		ObjectInputStream ois = new ObjectInputStream(fis);
 		
-		roomName = dis.readUTF();
-		capacity = dis.readInt();
-		pricePerHour = dis.readInt();
-		using = dis.readBoolean();
+		this.roomName = dis.readUTF();
+		this.capacity = dis.readInt();
+		this.pricePerHour = dis.readInt();
+		this.using = dis.readBoolean();
 		if(using)
 		{
 			startTime = (GregorianCalendar) ois.readObject();
