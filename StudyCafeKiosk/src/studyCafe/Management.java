@@ -27,29 +27,6 @@ public class Management {
 		else return false;
 	}
 
-	// roomTable에서 해당 룸 이름을 가진 방의 index를 찾는 함수 - 수정
-	public int findRoom(String roomName) throws Exception 
-	{
-		roomTableSize = roomTable.size();
-		int roomIndex = -1;
-		String name;
-		for(int index = 0; index<roomTableSize; index++)
-		{
-			name = roomTable.get(index).getRoomName();
-			if(name.equals(roomName))
-			{
-				roomIndex = index;
-			}
-		}
-		
-		if (roomIndex == -1) 
-		{
-			throw new Exception("There is no room named " + roomName + "."); //메세지길게하지말기
-		}
-
-		return roomIndex;
-	}
-	
 	//manager 기능-----------------------------------------------------------------------------------
 	//룸 생성
 	public void createRoom(String roomName, int capacity, int pricePerHour)

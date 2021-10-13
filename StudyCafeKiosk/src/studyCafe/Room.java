@@ -163,6 +163,23 @@ public class Room {
 		return userPay;
 	}
 	
+	//equals함수 오버라이딩
+	public boolean equals(Object obj)
+	{
+		if(!(obj instanceof Room)) //객체타입비교
+		{
+			return false;
+		}
+		Room room = (Room) obj;
+		
+		if(roomName == room.roomName) //방이름비교
+		{
+			return true;
+		}
+		else
+			return false;
+	}
+	
 	//방 정보 입력
 	void writeRoomInfo(FileOutputStream fos) throws Exception
 	{
