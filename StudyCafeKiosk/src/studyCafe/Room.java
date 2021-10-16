@@ -82,6 +82,23 @@ public class Room {
 		this.endTime = endTime;
 	}
 	
+	//(ArrayList API를 위한) equals함수 오버라이딩
+	public boolean equals(Object obj)
+	{
+		if(!(obj instanceof Room))
+		{
+			return false;
+		}
+		Room room = (Room) obj;
+		
+		if(roomName == room.roomName)
+		{
+			return true;
+		}
+		else
+			return false;
+	}
+	
 	//체크인
 	public boolean checkIn(User user)
 	{

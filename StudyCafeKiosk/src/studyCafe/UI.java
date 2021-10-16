@@ -86,7 +86,7 @@ public class UI
 						System.out.println("Choose between 1 and 3\n");
 						break;
 					}
-				} catch (java.util.InputMismatchException ime) // 숫자가 아닌 값을 입력했을 때 예외처리
+				} catch (InputMismatchException ime) // 숫자가 아닌 값을 입력했을 때 예외처리
 				{
 					System.out.println("You have entered an invalid value.\n");
 					sc.nextLine(); // 무한 루핑을 막기 위해 입력
@@ -103,10 +103,16 @@ public class UI
 					System.out.println("4. Previous Menu");
 					System.out.println("5. Exit");
 					System.out.print("=> ");
+					int answerUserMenu = -1;
 					try 
 					{
-						int answerUserMenu = sc.nextInt();
-
+						answerUserMenu = sc.nextInt();
+					} 
+					catch (java.util.InputMismatchException ime) // 숫자가 아닌 값을 입력했을 때 예외처리
+					{
+						System.out.println("You have enetered an invalid value.\n");
+					}
+					
 						switch (answerUserMenu) 
 						{
 						case 1: // 빈방 검색
@@ -118,7 +124,6 @@ public class UI
 							{
 								System.out.print("The number of users : "); // 검색 할 수용인원 입력하기
 								capacity = sc.nextInt();
-								
 							} 
 							catch (InputMismatchException ime) 
 							{
@@ -145,16 +150,37 @@ public class UI
 							}
 							
 						case 2: // 입실
-							// 사용자 정보 입력 받기
-							System.out.print("User Name : ");
-							String userName = sc.next();
-							System.out.print("User Phone number : ");
-							String userPhoneNum = sc.next();
-							User user = new User(userName, userPhoneNum);
+							String userName = ""; //사용자이름
+							String userPhoneNum = ""; //사용자 전화번호
+							String roomName = ""; //입실할 방 이름
 							
-							// 입실할 룸 정보 입력 받기
-							System.out.print("Name of the room to check-in : ");
-							String roomName = sc.next();
+							try
+							{
+								// 사용자 정보 입력 받기
+								System.out.print("User Name : ");
+								userName = sc.next();
+								System.out.print("User Phone number : ");
+								userPhoneNum = sc.next();
+							}
+							catch(InputMismatchException ime)
+							{
+								System.out.println("You have enetered an invalid value.");
+								sc.nextLine();
+							}
+							
+							User user = new User(userName, userPhoneNum); //User객체 생성
+							
+							try
+							{
+								// 입실할 룸 정보 입력 받기
+								System.out.print("Name of the room to check-in : ");
+								roomName = sc.next();
+							}
+							catch(InputMismatchException ime)
+							{
+								System.out.println("You have enetered an invalid value.");
+								sc.nextLine();
+							}
 							
 							// 입실하기
 							try 
@@ -256,10 +282,7 @@ public class UI
 							System.out.println("Choose between 1 and 5.\n");
 							break;
 						}
-					} catch (java.util.InputMismatchException ime) // 숫자가 아닌 값을 입력했을 때 예외처리
-					{
-						System.out.println("You have enetered an invalid value.\n");
-					}
+					
 				}
 				System.out.println();
 
@@ -289,6 +312,7 @@ public class UI
 								int pricePerHour = sc.nextInt();
 								// 방 생성
 								mg.createRoom(roomName, capacity, pricePerHour);
+								System.out.println("Successfully created! : " + roomName );
 							} catch (InputMismatchException ime) // int형 데이터에 다른 값이 입력되었을 경우 예외처리
 							{
 								System.out.println("You have entered an invalid value.");
@@ -307,7 +331,7 @@ public class UI
 							{
 								System.out.println("There is no room named" + roomName);
 							}
-							System.out.println("Successfully remove a " + roomName );
+							System.out.println("Successfully removed! : " + roomName );
 							break;
 						case 3: // 방 수정
 							// 수정 메뉴
