@@ -111,6 +111,7 @@ public class UI
 					catch (java.util.InputMismatchException ime) // 숫자가 아닌 값을 입력했을 때 예외처리
 					{
 						System.out.println("You have enetered an invalid value.\n");
+						sc.nextLine(); // 무한 루핑을 막기 위해 입력
 					}
 					
 						switch (answerUserMenu) 
@@ -208,13 +209,19 @@ public class UI
 							// 체크아웃하는 룸의 사용자 정보 조회
 							System.out.print("Name of the room to check-out : ");
 							roomName = sc.next();
-							System.out.print("User Name : ");
-							userName = sc.next();
-							System.out.print("User Phone number : ");
-							userPhoneNum = sc.next();
-							boolean checkUser = false;
+							boolean checkUser = false; //사용자 정보 일치 여부를 저장하는 변수
 							try
 							{
+								//방이 있는지 검사
+								mg.searchRoom(roomName);
+								
+								//사용자 정보 입력
+								System.out.print("User Name : ");
+								userName = sc.next();
+								System.out.print("User Phone number : ");
+								userPhoneNum = sc.next();
+								
+								//사용자 정보 검사
 								checkUser = mg.isRightCheckOutUser(roomName, userName, userPhoneNum);
 							}
 							catch (IndexOutOfBoundsException ioe) 
@@ -310,10 +317,19 @@ public class UI
 								int capacity = sc.nextInt();
 								System.out.print("Price per hour : ");
 								int pricePerHour = sc.nextInt();
-								// 방 생성
-								mg.createRoom(roomName, capacity, pricePerHour);
-								System.out.println("Successfully created! : " + roomName );
-							} catch (InputMismatchException ime) // int형 데이터에 다른 값이 입력되었을 경우 예외처리
+								
+								//방 이름 중복 검사
+								if(!mg.searchRoom(roomName))
+								{
+									// 방 생성
+									mg.createRoom(roomName, capacity, pricePerHour);
+									System.out.println("Successfully created! : " + roomName );
+								}
+								else
+								{
+									System.out.println(roomName + " is already existed.");
+								}
+							} catch (InputMismatchException ime) //다른type의 값이 입력되었을 경우 예외처리
 							{
 								System.out.println("You have entered an invalid value.");
 								sc.nextLine();
