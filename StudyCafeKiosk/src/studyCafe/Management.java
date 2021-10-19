@@ -101,8 +101,8 @@ public class Management {
 	}
 	
 	
-	//toString 오버라이딩
-	public String toStringForAll(Room room)
+	//toString 오버라이딩 - Management에 있으면 X
+	public String toStringForAll(Room room) 
 	{
 		return room.getRoomName() + "| \t  " + room.getCapacity() + "\t   "
 				+ room.getPricePerHour() + "\t   " + room.getUsing() + "\t   "
