@@ -1,6 +1,5 @@
 package studyCafe;
 
-import java.text.SimpleDateFormat;
 import java.util.GregorianCalendar;
 import java.util.Calendar;
 import java.io.*;
@@ -56,6 +55,18 @@ public class Room {
 	{
 		return user;
 	}
+	//체크인 시간
+	public GregorianCalendar getCheckInTime()
+	{
+		return startTime;
+	}
+	//체크아웃 시간
+	public GregorianCalendar getCheckOutTime()
+	{
+		this.endTime = new GregorianCalendar();
+		return endTime;
+	}
+
 	//setter함수
 	void setRoomName(String roomName)
 	{
@@ -86,6 +97,7 @@ public class Room {
 		this.endTime = endTime;
 	}
 	
+	
 	//(ArrayList API를 위한) equals함수 오버라이딩
 	public boolean equals(Object obj)
 	{
@@ -98,30 +110,12 @@ public class Room {
 		else
 			return false;
 	}
-	
 	//체크인
-	public boolean checkIn(User user)
+	public void checkIn(User user)
 	{
-		if(!getUsing()) //사용중이 아닐 때
-		{
-			this.user = user;
-			setUsing(true);
-			this.startTime = new GregorianCalendar();
-			return true;
-		}
-		else //사용중일 때
-		{
-			return false;
-		}
-		
-	}
-	//체크인 시간
-	public String getCheckInTime()
-	{
-		//시작 시간 포맷 설정
-		SimpleDateFormat dateFormat = new SimpleDateFormat("MM월 dd일 aa hh시 mm분 ss초");
-		showCheckInTime = dateFormat.format(startTime.getTime());
-		return showCheckInTime; // 입실 시간 사용자에게 보여주기 위해 return
+		this.user = user;
+		setUsing(true);
+		this.startTime = new GregorianCalendar();
 	}
 	//체크아웃
 	public void checkOut()
@@ -130,16 +124,6 @@ public class Room {
 		setUsing(false);
 	}
 	
-	//체크아웃 시간
-	public String getCheckOutTime()
-	{
-		this.endTime = new GregorianCalendar();
-		// 퇴실 시간 포맷 설정
-		SimpleDateFormat dateFormat = new SimpleDateFormat("MM월 dd일 aa hh시 mm분 ss초");
-		String showCheckOutTime = dateFormat.format(endTime.getTime());
-		return showCheckOutTime; // 퇴실 시간 사용자에게 보여주기 위해 return
-	}
-
 	//사용시간계산
 	private int calacUsedTime()
 	{

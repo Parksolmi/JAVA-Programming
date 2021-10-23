@@ -1,5 +1,6 @@
 package studyCafe;
 import java.io.*;
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 public class UI 
@@ -145,7 +146,8 @@ public class UI
 							{
 								for(Room room:emptyRoomTable)
 								{
-									System.out.println(mg.toStringForEmpty(room));
+									System.out.println(room.getRoomName() + "| \t  " + room.getCapacity() + "\t\t"
+											+ room.getPricePerHour());
 								}
 								break;
 							}
@@ -163,7 +165,7 @@ public class UI
 								System.out.print("User Phone number : ");
 								userPhoneNum = sc.next();
 							}
-							catch(InputMismatchException ime)
+							catch(InputMismatchException ime) //사용자 정보 입력 관련 예외처린
 							{
 								System.out.println("You have enetered an invalid value.");
 								sc.nextLine();
@@ -181,14 +183,17 @@ public class UI
 							{
 								System.out.println("You have enetered an invalid value.");
 								sc.nextLine();
-							}
+							} 
 							
 							// 입실하기
 							try 
 							{
 								if(mg.checkIn(roomName, user))
 								{
-									String checkInTime = mg.showCheckInTime(roomName);
+									Room room = mg.getRoom(roomName);
+									//시작 시간 포맷 설정
+									SimpleDateFormat dateFormat = new SimpleDateFormat("MM월 dd일 aa hh시 mm분 ss초");
+									String checkInTime = dateFormat.format(room.getCheckInTime().getTime());
 									System.out.println();
 									System.out.println("Check-in time : " + checkInTime);
 									System.out.println("Check-in success.");
@@ -235,8 +240,11 @@ public class UI
 							{
 								try
 								{
-									String checkInTime = mg.showCheckInTime(roomName);
-									String checkOutTime = mg.showCheckOutTime(roomName);
+									Room room = mg.getRoom(roomName);
+									//시작 시간 포맷 설정
+									SimpleDateFormat dateFormat = new SimpleDateFormat("MM월 dd일 aa hh시 mm분 ss초");
+									String checkInTime = dateFormat.format(room.getCheckInTime().getTime());
+									String checkOutTime = dateFormat.format(room.getCheckOutTime().getTime());
 									
 									System.out.println();
 									System.out.println("Check-in time : " + checkInTime);
@@ -449,7 +457,12 @@ public class UI
 							{
 								for(Room room:roomTable)
 								{
-									System.out.println(mg.toStringForAll(room));
+									System.out.println(room.getRoomName() + "| \t  " 
+											+ room.getCapacity() + "\t   "
+											+ room.getPricePerHour() + "\t   " 
+											+ room.getUsing() + "\t   "
+											+ room.getUser().getUserName() + "\t  "
+											+ room.getUser().getUserPhoneNum());
 								}
 							}
 							break;

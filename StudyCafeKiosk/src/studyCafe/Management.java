@@ -29,7 +29,6 @@ public class Management {
 	{
 		return roomTableSize;
 	}
-
 	
 	// roomTable에서 해당 룸 이름을 가진 방의 index를 반환하는 함수
 	public int searchRoomIndex(String roomName)
@@ -100,20 +99,6 @@ public class Management {
 		return roomTable.get(roomIndex).getPricePerHour();
 	}
 	
-	
-	//toString 오버라이딩 - Management에 있으면 X
-	public String toStringForAll(Room room) 
-	{
-		return room.getRoomName() + "| \t  " + room.getCapacity() + "\t   "
-				+ room.getPricePerHour() + "\t   " + room.getUsing() + "\t   "
-				+ room.getUser().getUserName() + "\t  "
-				+ room.getUser().getUserPhoneNum();
-	}
-	public String toStringForEmpty(Room room)
-	{
-		return room.getRoomName() + "| \t  " + room.getCapacity() + "\t\t"
-				+ room.getPricePerHour();
-	}
 	//생성된 전체 방 조회
 	public ArrayList<Room> checkAllCreatedRoom()
 	{
@@ -140,25 +125,29 @@ public class Management {
 		return emptyRoomTable;
 	}
 	
-	
+	//roomTable에서 해당 이름을 가진 방 객체를 리턴하는 함수
+	public Room getRoom(String roomName) throws Exception
+	{
+		// 방찾기
+		int roomIndex = searchRoomIndex(roomName);
+		return roomTable.get(roomIndex);
+	}
 	// 체크인
 	public boolean checkIn(String roomName, User user) throws Exception 
 	{
 		// 방찾기
 		int roomIndex = searchRoomIndex(roomName);
 		//체크인하기
-		boolean result = roomTable.get(roomIndex).checkIn(user);
-		
-		return result;
-	}
-	//체크인시간 보여주기
-	public String showCheckInTime(String roomName) throws Exception
-	{
-		// 방찾기
-		int roomIndex = searchRoomIndex(roomName);
-		
-		String showCheckInTime = roomTable.get(roomIndex).getCheckInTime();
-		return showCheckInTime; //입실시간 사용자에게 보여줌
+		Room room = roomTable.get(roomIndex);
+		if(room.getUsing()) //사용 중(체크인 불가능)
+		{
+			return false;
+		}
+		else //비었음(체크인 가능)
+		{
+			room.checkIn(user);
+			return true;
+		}
 	}
 	// 체크아웃
 	public void checkOut(String roomName) throws Exception 
@@ -167,15 +156,7 @@ public class Management {
 		int roomIndex = searchRoomIndex(roomName);
 		roomTable.get(roomIndex).checkOut();
 	}
-	//체크아웃시간 보여주기
-	public String showCheckOutTime(String roomName) throws Exception
-	{
-		// 방찾기
-		int roomIndex = searchRoomIndex(roomName);
-
-		String showCheckOutTime = roomTable.get(roomIndex).getCheckOutTime();
-		return showCheckOutTime; //퇴실시간 사용자에게 보여줌
-	}
+	
 	// 체크아웃 사용자 정보 확인
 	public boolean isRightCheckOutUser(String roomName, String userName,
 											String userPhoneNum) throws Exception 
