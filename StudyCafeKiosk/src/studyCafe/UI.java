@@ -10,15 +10,15 @@ public class UI
 		Scanner sc = new Scanner(System.in); // scanner객체 생성
 		Management mg = new Management("manager001"); // management객체 생성
 		File roomInfoFile = new File("studyCafeRoom.txt");
-		FileOutputStream roomInfoOut = null;
-		FileInputStream roomInfoIn = null;
+		ObjectOutputStream roomInfoOut = null;
+		ObjectInputStream roomInfoIn = null;
 		
 		if(!roomInfoFile.exists())
 		{
 			try
 			{
 				// 방 정보를 저장할 파일 생성
-				roomInfoOut = new FileOutputStream(roomInfoFile);
+				roomInfoOut = new ObjectOutputStream(new FileOutputStream(roomInfoFile));
 			}
 			catch (FileNotFoundException fnfe) {
 				System.out.println("The file could not be found.");
@@ -27,8 +27,9 @@ public class UI
 		
 		try {
 				// 방 정보를 읽어올 파일 불러오기
-				roomInfoIn = new FileInputStream(roomInfoFile);
+				roomInfoIn = new ObjectInputStream(new FileInputStream(roomInfoFile));
 				mg.readRoomInfo(roomInfoIn);
+				
 				int numberOfRooms = mg.getRoomTableSize();
 				System.out.println("Currently, " + numberOfRooms + " rooms are created.");
 				System.out.println();
@@ -42,6 +43,8 @@ public class UI
 			} catch (IOException ioe) {
 				System.out.println("The file cannot be read."); // 파일을 읽어올 수 없음
 				System.out.println();
+			} catch (ClassNotFoundException cnfe) {
+				System.out.println("The class does not exist.");
 			} finally {
 				try {
 					roomInfoIn.close();
@@ -490,13 +493,13 @@ public class UI
 
 			try
 			{
-				roomInfoOut = new FileOutputStream(roomInfoFile);
+				roomInfoOut = new ObjectOutputStream(new FileOutputStream(roomInfoFile));
 				// 방 정보 파일에 쓰기
 				mg.writeRoomInfo(roomInfoOut);
 			} catch (FileNotFoundException fnfe) {
 				System.out.println("The file could not be found.");
 			} catch (IOException ioe) {
-				System.out.println("The file cannot be read.");
+				System.out.println("The file cannot be output.");
 			} finally {
 				try {
 					roomInfoOut.close();

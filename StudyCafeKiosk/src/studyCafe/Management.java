@@ -10,8 +10,7 @@ public class Management {
 	
 	private String managerID; //관리자UI로 들어가기 위한 관리자ID
 	
-	private int[] totalSales = new int[31]; //매일(31일) 각각의 매출을 저장하는 배열
-	
+	//private int[] totalSales = new int[31]; //매일(31일) 각각의 매출을 저장하는 배열
 	
 	//생성자
 	Management()
@@ -27,6 +26,7 @@ public class Management {
 	//getter&setter
 	public int getRoomTableSize()
 	{
+		roomTableSize = roomTable.size();
 		return roomTableSize;
 	}
 	
@@ -188,32 +188,18 @@ public class Management {
 		return userPay;
 	}
 	
-	//방 정보 입력 - Room클래스에서 받아와서 쓰기
-	void writeRoomInfo(FileOutputStream fos) throws Exception
+	
+	//방 정보 쓰기
+	void writeRoomInfo(ObjectOutputStream oos) throws Exception
 	{
-		DataOutputStream dos = new DataOutputStream(fos);
-		
-		roomTableSize = roomTable.size();
-		dos.writeInt(roomTableSize);
-		for(Room room:roomTable)
-		{
-			room.writeRoomInfo(fos);
-		}
-		
+		oos.writeObject(roomTable);
+	}
+	//방 정보 읽기
+	@SuppressWarnings("unchecked")
+	void readRoomInfo(ObjectInputStream ois) throws Exception
+	{
+		roomTable = (ArrayList<Room>) ois.readObject();
 	}
 	
-	//방 정보 읽어서 변수에 저장하기
-	void readRoomInfo(FileInputStream fis) throws Exception
-	{
-		DataInputStream dis = new DataInputStream(fis);
-		
-		roomTableSize = dis.readInt();
-		for(int index=0; index<roomTableSize; index++)
-		{
-			Room room = new Room();
-			roomTable.add(room);
-			roomTable.get(index).readRoomInfo(fis);
-		}
-	}
 	
 }

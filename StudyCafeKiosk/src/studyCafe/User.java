@@ -1,6 +1,7 @@
 package studyCafe;
 
-public class User {
+@SuppressWarnings("serial")
+public class User implements java.io.Serializable {
 	
 	private String userPhoneNum; //사용자 전화번호
 	private String userName; //사용자 이름
