@@ -12,29 +12,26 @@ public class FrameTest extends JFrame{
 class FrameTest2 extends JFrame {
 	FrameTest2() {
 		setSize(220, 200);
-		
 		setTitle("Registration"); //setTitle
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		Container contentPane = this.getContentPane();
-
+		
 		JPanel panel = new JPanel(); //패널 생성
-		//panel.setLayout(new GridLayout(3, 2));
 		
-		contentPane.setLayout(new BorderLayout());
+		panel.setLayout(new GridLayout(3, 2));
 		
-		contentPane.add(new JLabel("ID:"), BorderLayout.WEST);
-		contentPane.add(new JTextField(10), BorderLayout.EAST);
+		panel.add(new JLabel("ID:"));
+		panel.add(new JTextField(10));
 		
 		//레이블과 텍스트 필드, 버튼 생성
+		panel.add(new JLabel("학번:"));
+		panel.add(new JTextField(10));
+		panel.add(new JLabel("학과:"));
+		panel.add(new JTextField(10));
 		
-		contentPane.add(new JLabel("학번:"), BorderLayout.WEST);
-		contentPane.add(new JTextField(13), BorderLayout.EAST);
-		contentPane.add(new JLabel("학과:"), BorderLayout.WEST);
-		contentPane.add(new JTextField(13), BorderLayout.EAST);
-		contentPane.add(new JButton("등록"), BorderLayout.SOUTH);
+		add(panel, BorderLayout.CENTER);
+		panel.add(new JButton("등록"), BorderLayout.SOUTH);
 		
-		add(panel);
-		this.pack();
+		pack();
 		setVisible(true);
 	}
 }
