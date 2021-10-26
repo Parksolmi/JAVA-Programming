@@ -13,7 +13,7 @@ public class Room implements Serializable {
 	private int pricePerHour; //시간 당 방가격
 	private GregorianCalendar startTime; //입실 날짜
 	private GregorianCalendar endTime; //퇴실 날짜
-	transient private int usedTime; //이용시간 (단위:시간)
+	transient private int usedTime; //이용시간 (단위:시간) -- 필드로 만들 필요 X
 	private boolean using; //사용여부
 	
 	//private boolean Reserve; //예약여부
