@@ -4,13 +4,10 @@ import java.io.*;
 import java.util.ArrayList;
 
 public class Management {
-	ArrayList<Room> roomTable = new ArrayList<Room>(); //방 객체를 담는 리스트
-	int roomTableSize; //roomTable리스트의 크기
-	Room room = new Room(); //룸 객체
-	
-	private String managerID; //관리자UI로 들어가기 위한 관리자ID
-	
-	//private int[] totalSales = new int[31]; //매일(31일) 각각의 매출을 저장하는 배열
+	private ArrayList<Room> roomList = new ArrayList<Room>(); //방 객체를 담는 리스트
+	private int roomTableSize; //roomTable리스트의 크기
+	private String managerID; //관리자UI로 들어가기 위한 관리자ID;
+	private ArrayList<Sales> salesList = new ArrayList<Sales>(); //매출 리스트
 	
 	//생성자
 	Management()
@@ -26,25 +23,40 @@ public class Management {
 	//getter&setter
 	public int getRoomTableSize()
 	{
-		roomTableSize = roomTable.size();
+		roomTableSize = roomList.size();
 		return roomTableSize;
 	}
+	public ArrayList<Room> getRoomList()
+	{
+		return roomList;
+	}
+	public ArrayList<Sales> getSalesList()
+	{
+		return salesList;
+	}
+	
+	
 	
 	// roomTable에서 해당 룸 이름을 가진 방의 index를 반환하는 함수
 	public int searchRoomIndex(String roomName)
 	{
-		room.setRoomName(roomName);
-		return roomTable.indexOf(room);
+		Room room = new Room(roomName);
+		return roomList.indexOf(room);
 	}
 	// roomTable에서 해당 룸 이름을 가진 방이 있는지 검사하는 함수
-	public boolean searchRoom (String roomName)
+	public boolean isRoomExist (String roomName)
 	{
-		room.setRoomName(roomName);
-		return roomTable.contains(room);
+		Room room = new Room(roomName);
+		return roomList.contains(room);
+	}
+	// roomTable에서 해당 룸 이름을 가진 룸 객체 반환
+	public Room searchRoom (String roomName)
+	{
+		Room room = new Room(roomName);
+		return roomList.get(roomList.indexOf(room));
 	}
 	
-	//manager 기능-----------------------------------------------------------------------------------
-	
+	//manager 기능
 	//managerID검사하는 함수
 	boolean checkManagerID(String managerID)
 	{
@@ -55,16 +67,13 @@ public class Management {
 	public void createRoom(String roomName, int capacity, int pricePerHour)
 	{
 		Room room = new Room(roomName, capacity, pricePerHour);
-		room.setUsing(false);
-		
-		roomTable.add(room); //리스트에 룸 저장
+		roomList.add(room); //리스트에 룸 저장
 	}
 	//룸 삭제
-	public void removeRoom(String roomName) throws Exception
+	public boolean removeRoom(String roomName)
 	{
-		//해당 이름을 가진 방의 인덱스 찾아서 삭제
-		int roomIndex = searchRoomIndex(roomName);
-		roomTable.remove(roomIndex);
+		Room room = new Room(roomName);
+		return roomList.remove(room);
 	}
 	
 	//룸 관련 정보 수정
@@ -72,53 +81,75 @@ public class Management {
 	public void changeRoomName(String orgRoomName, String changedRoomName) throws Exception
 	{
 		int orgRoomIndex = searchRoomIndex(orgRoomName);
-		roomTable.get(orgRoomIndex).setRoomName(changedRoomName);
+		roomList.get(orgRoomIndex).setRoomName(changedRoomName);
 	}
 	//수용 인원 수정
 	public void changeCapacity(String roomName, int changedCapacity) throws Exception
 	{
 		int roomIndex = searchRoomIndex(roomName);
-		roomTable.get(roomIndex).setCapacity(changedCapacity);
+		roomList.get(roomIndex).setCapacity(changedCapacity);
 	}
 	//시간당 가격 수정
 	public void changePricePerHour(String roomName, int changedPricePerHour) throws Exception
 	{
 		int roomIndex = searchRoomIndex(roomName);
-		roomTable.get(roomIndex).setPricePerHour(changedPricePerHour);
+		roomList.get(roomIndex).setPricePerHour(changedPricePerHour);
 	}
 	//해당 이름의 방의 capacity값을 반환하는 함수
 	public int howManyCapacity(String roomName) throws Exception
 	{
 		int roomIndex = searchRoomIndex(roomName);
-		return roomTable.get(roomIndex).getCapacity();
+		return roomList.get(roomIndex).getCapacity();
 	}
 	//해당 이름의 방의 가격을 반환하는 함수
 	public int howMuchPrice(String roomName) throws Exception
 	{
 		int roomIndex = searchRoomIndex(roomName);
-		return roomTable.get(roomIndex).getPricePerHour();
+		return roomList.get(roomIndex).getPricePerHour();
 	}
 	
-	//생성된 전체 방 조회
-	public ArrayList<Room> checkAllCreatedRoom()
+	
+	//매출
+	//결제 로그 기록하기
+	public void writeSalesInfo(ObjectOutputStream oos) throws Exception
 	{
-		return roomTable;
+		oos.writeObject(salesList);
 	}
-
-	//User 기능---------------------------------------------------------------------------------------
+	//결제 로그 읽어오기
+	@SuppressWarnings("unchecked")
+	public void readSalesInfo(ObjectInputStream ois) throws Exception
+	{
+		salesList = (ArrayList<Sales>) ois.readObject();
+	}
+	//결제 로그 날짜로 찾기
 	
+	//일 누적 매출 계산
+	
+	//월 누적 매출 계산
+	
+	//매출 리스트에 매출 정보 추가
+	public void addSalesList(String roomName)
+	{
+		Room room = new Room(roomName); //임시 방
+		//해당 방 이름을 가진 객체 찾기
+		Room usedRoom = roomList.get(roomList.indexOf(room));
+		salesList.add(usedRoom.getSalesInfo());
+	}
+	
+	
+	//User 기능	
 	//수용 인원(capacity)으로 빈 방 검색하기
 	public ArrayList<Room> searchEmptyRoomByCapacity(int capacity)
 	{
-		roomTableSize = roomTable.size(); //roomTable의 크기
+		roomTableSize = roomList.size(); //roomTable의 크기
 		ArrayList<Room> emptyRoomTable = new ArrayList<Room>(); //roomTable에서 빈 방만 담은 리스트
 		
 		for(int index = 0; index<roomTableSize; index++)
 		{
-			int roomCapacity = roomTable.get(index).getCapacity();
-			if(capacity <= roomCapacity && roomTable.get(index).getUsing()==false)
+			int roomCapacity = roomList.get(index).getCapacity();
+			if(capacity <= roomCapacity && roomList.get(index).getUsing()==false)
 			{
-				emptyRoomTable.add(roomTable.get(index));
+				emptyRoomTable.add(roomList.get(index));
 			}
 		}
 		
@@ -130,7 +161,7 @@ public class Management {
 	{
 		// 방찾기
 		int roomIndex = searchRoomIndex(roomName);
-		return roomTable.get(roomIndex);
+		return roomList.get(roomIndex);
 	}
 	// 체크인
 	public boolean checkIn(String roomName, User user) throws Exception 
@@ -138,7 +169,7 @@ public class Management {
 		// 방찾기
 		int roomIndex = searchRoomIndex(roomName);
 		//체크인하기
-		Room room = roomTable.get(roomIndex);
+		Room room = roomList.get(roomIndex);
 		if(room.getUsing()) //사용 중(체크인 불가능)
 		{
 			return false;
@@ -152,9 +183,8 @@ public class Management {
 	// 체크아웃
 	public void checkOut(String roomName) throws Exception 
 	{
-		// 방찾기
-		int roomIndex = searchRoomIndex(roomName);
-		roomTable.get(roomIndex).checkOut();
+		Room room = new Room(roomName);
+		roomList.get(roomList.indexOf(room)).checkOut();
 	}
 	
 	// 체크아웃 사용자 정보 확인
@@ -165,8 +195,8 @@ public class Management {
 		int roomIndex = searchRoomIndex(roomName);
 		
 		// 사용자 정보 비교
-		User user = roomTable.get(roomIndex).getUser();
-		if (user.getUserName().equals(userName) 
+		User user = roomList.get(roomIndex).getUser();
+		if (user.getUserName().equals(userName)
 				&& user.getUserPhoneNum().equals(userPhoneNum)) 
 		{
 			return true; // 사용자 정보 일치
@@ -181,24 +211,21 @@ public class Management {
 	public int pay(String roomName) throws Exception
 	{
 		int roomIndex = searchRoomIndex(roomName);
-		
-		int pricePerHour = roomTable.get(roomIndex).getPricePerHour();
-		int userPay = roomTable.get(roomIndex).pay(pricePerHour);
+		int userPay = roomList.get(roomIndex).pay();
 		
 		return userPay;
 	}
 	
-	
 	//방 정보 쓰기
 	void writeRoomInfo(ObjectOutputStream oos) throws Exception
 	{
-		oos.writeObject(roomTable);
+		oos.writeObject(roomList);
 	}
 	//방 정보 읽기
 	@SuppressWarnings("unchecked")
 	void readRoomInfo(ObjectInputStream ois) throws Exception
 	{
-		roomTable = (ArrayList<Room>) ois.readObject();
+		roomList = (ArrayList<Room>) ois.readObject();
 	}
 	
 	

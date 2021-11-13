@@ -13,11 +13,8 @@ public class Room implements Serializable {
 	private int pricePerHour; //시간 당 방가격
 	private GregorianCalendar startTime; //입실 날짜
 	private GregorianCalendar endTime; //퇴실 날짜
-	transient private int usedTime; //이용시간 (단위:시간) -- 필드로 만들 필요 X
 	private boolean using; //사용여부
-	
-	//private boolean Reserve; //예약여부
-	//private int reserveTime; //예약시간
+	private Sales salesInfo = new Sales(); //방의 매출 정보를 저장할 객체
 	
 	//생성자
 	Room()
@@ -33,26 +30,27 @@ public class Room implements Serializable {
 		this.roomName = roomName;
 		this.capacity = capacity;
 		this.pricePerHour = pricePerHour;
+		this.using = false;
 	}
 	
 	//getter함수
-	String getRoomName()
+	public String getRoomName()
 	{
 		return roomName;
 	}
-	int getCapacity()
+	public int getCapacity()
 	{
 		return capacity;
 	}
-	int getPricePerHour()
+	public int getPricePerHour()
 	{
 		return pricePerHour;
 	}
-	boolean getUsing()
+	public boolean getUsing()
 	{
 		return using;
 	}
-	User getUser()
+	public User getUser()
 	{
 		return user;
 	}
@@ -67,33 +65,37 @@ public class Room implements Serializable {
 		this.endTime = new GregorianCalendar();
 		return endTime;
 	}
+	public Sales getSalesInfo()
+	{
+		return salesInfo;
+	}
 
 	//setter함수
-	void setRoomName(String roomName)
+	public void setRoomName(String roomName)
 	{
 		this.roomName = roomName;
 	}
-	void setCapacity(int capacity)
+	public void setCapacity(int capacity)
 	{
 		this.capacity = capacity;
 	}
-	void setPricePerHour(int pricePerHour)
+	public void setPricePerHour(int pricePerHour)
 	{
 		this.pricePerHour = pricePerHour;
 	}
-	void setUsing(boolean using)
+	public void setUsing(boolean using)
 	{
 		this.using = using;
 	}
-	void setUser(User user)
+	public void setUser(User user)
 	{
 		this.user = user;
 	}
-	void setStartTime(GregorianCalendar startTime)
+	public void setStartTime(GregorianCalendar startTime)
 	{
 		this.startTime = startTime;
 	}
-	void setEndTime(GregorianCalendar endTime)
+	public void setEndTime(GregorianCalendar endTime)
 	{
 		this.endTime = endTime;
 	}
@@ -121,12 +123,14 @@ public class Room implements Serializable {
 	//체크아웃
 	public void checkOut()
 	{
-		this.user = null;
-		setUsing(false);
+		salesInfo.setPayedUser(user);
+		salesInfo.setPaymentDate(endTime);
+		
+		setUsing(false); //사용정보 false로 바꿈
 	}
 	
 	//사용시간계산
-	private int calacUsedTime()
+	private int calcUsedTime()
 	{
 		//일 계산
 		int startDate = startTime.get(Calendar.DATE);
@@ -137,7 +141,7 @@ public class Room implements Serializable {
 		int endHour = endTime.get(Calendar.HOUR_OF_DAY);
 		
 		//총 시간
-		usedTime = 0; 
+		int usedTime = 0; 
 		if(startDate < endDate) //day가 지난 경우
 		{
 			if(startHour <= endHour)
@@ -163,13 +167,12 @@ public class Room implements Serializable {
 	}
 	
 	//값 지불 함수
-	public int pay(int pricePerHour)
+	public int pay()
 	{
-		setPricePerHour(pricePerHour);
-		usedTime = calacUsedTime();
+		int usedTime = calcUsedTime();
 		int userPay = usedTime * pricePerHour;
-		
+		salesInfo.setUsedTime(usedTime);
+		salesInfo.setPayedBill(userPay);
 		return userPay;
 	}
-	
 }

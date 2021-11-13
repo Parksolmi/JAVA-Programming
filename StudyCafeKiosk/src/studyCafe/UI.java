@@ -9,11 +9,14 @@ public class UI
 		
 		Scanner sc = new Scanner(System.in); // scanner객체 생성
 		Management mg = new Management("manager001"); // management객체 생성
-		File roomInfoFile = new File("studyCafeRoom.txt");
+		File roomInfoFile = new File("studyCafeRoom.dat");
+		File salesInfoFile = new File("studyCafeSales.dat"); 
 		ObjectOutputStream roomInfoOut = null;
 		ObjectInputStream roomInfoIn = null;
+		ObjectOutputStream salesInfoOut = null;
+		ObjectInputStream salesInfoIn = null;
 		
-		if(!roomInfoFile.exists())
+		if(!roomInfoFile.exists()) //방 정보 파일이 없으면
 		{
 			try
 			{
@@ -21,14 +24,29 @@ public class UI
 				roomInfoOut = new ObjectOutputStream(new FileOutputStream(roomInfoFile));
 			}
 			catch (FileNotFoundException fnfe) {
-				System.out.println("The file could not be found.");
+				System.out.println("The Room file could not be found.");
 			}
 		}
+		if(!salesInfoFile.exists()) //매출 정보 파일이 없으면
+		{
+			try
+			{
+				//매출 정보를 저장할 파일 생성
+				salesInfoOut = new ObjectOutputStream(new FileOutputStream(salesInfoFile));
+			}
+			catch (FileNotFoundException fnfe) {
+				System.out.println("The Sales file could not be found.");
+			}
+			
+		}
+		
 		
 		try {
 				// 방 정보를 읽어올 파일 불러오기
 				roomInfoIn = new ObjectInputStream(new FileInputStream(roomInfoFile));
+				salesInfoIn = new ObjectInputStream(new FileInputStream(salesInfoFile));
 				mg.readRoomInfo(roomInfoIn);
+				mg.readSalesInfo(salesInfoIn);
 				
 				int numberOfRooms = mg.getRoomTableSize();
 				System.out.println("Currently, " + numberOfRooms + " rooms are created.");
@@ -48,6 +66,7 @@ public class UI
 			} finally {
 				try {
 					roomInfoIn.close();
+					salesInfoIn.close();
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
@@ -276,6 +295,7 @@ public class UI
 									}
 									System.out.println();
 									System.out.println("Check-out success.");
+									mg.addSalesList(roomName); //매출 정보 저장
 								} 
 								else //결제를 승락하지 않은 경우
 								{
@@ -285,8 +305,9 @@ public class UI
 							} 
 							else //사용자 정보가 일치하지 않을 경우
 								System.out.println("Wrong user information.");
-							break;
 							
+							break;
+						
 						case 4: // 이전 메뉴로 돌아가기
 							userMode = false;
 							break;
@@ -312,8 +333,9 @@ public class UI
 					System.out.println("2. Remove a room"); // 방 삭제
 					System.out.println("3. Revise room info"); // 방 수정
 					System.out.println("4. Check the entire rooms"); // 전체 방 조회
-					System.out.println("5. Previous menu"); // 이전 메뉴로 돌아가기
-					System.out.println("6. Exit");
+					System.out.println("5. Inquire sales infromation"); //매출 정보 조회
+					System.out.println("6. Previous menu"); // 이전 메뉴로 돌아가기
+					System.out.println("7. Exit");
 					System.out.print("=> ");
 					try {
 						int answerManagerMenu = sc.nextInt();
@@ -330,7 +352,7 @@ public class UI
 								int pricePerHour = sc.nextInt();
 								
 								//방 이름 중복 검사
-								if(!mg.searchRoom(roomName))
+								if(!mg.isRoomExist(roomName))
 								{
 									// 방 생성
 									mg.createRoom(roomName, capacity, pricePerHour);
@@ -350,15 +372,21 @@ public class UI
 						case 2: // 방 삭제
 							System.out.print("Room name to remove : ");
 							String roomName = sc.next();
-							try
+							
+							if (mg.removeRoom(roomName)) // 해당 방 이름이 존재할 때
 							{
-								mg.removeRoom(roomName);
-							}
-							catch(IndexOutOfBoundsException ioe)
+								if (!mg.searchRoom(roomName).getUsing()) // 사용 중이지 않을 때
+								{
+									System.out.println("Successfully removed! : " + roomName);
+								} else // 사용 중일 때
+								{
+									System.out.println("This room is using.");
+								}
+							} else // 해당 방 이름이 존재하지 않을 때
 							{
-								System.out.println("There is no room named" + roomName);
+								System.out.println("There is no room named " + roomName);
 							}
-							System.out.println("Successfully removed! : " + roomName );
+							
 							break;
 						case 3: // 방 수정
 							// 수정 메뉴
@@ -446,35 +474,73 @@ public class UI
 							break; // case3의 break문
 							
 						case 4: // 전체 방 조회
-							System.out.println("Name\tCapacity   Price   Using   User   Phone");
-							System.out.println("-------------------------------------------------");
 							
-							ArrayList<Room> roomTable = new ArrayList<Room>();
+							ArrayList<Room> roomList = new ArrayList<Room>();
 							
-							roomTable = mg.checkAllCreatedRoom(); // 전체 방 조회
-							if(roomTable.isEmpty()) // roomTable이 비었을 때
+							roomList = mg.getRoomList(); //방 리스트 받아오기
+							if(roomList.isEmpty()) // roomList가 비었을 때
 							{
 								System.out.println("There are no room created.");
 							}
 							else
 							{
-								for(Room room:roomTable)
+								System.out.println("[ All Rooms Information ]");
+								System.out.println("Name\tCapacity   Price   Using   User   Phone");
+								System.out.println("-------------------------------------------------");
+								
+								for(Room room:roomList)
 								{
-									System.out.println(room.getRoomName() + "| \t  " 
+									
+									System.out.print(room.getRoomName() + "| \t  " 
 											+ room.getCapacity() + "\t   "
 											+ room.getPricePerHour() + "\t   " 
-											+ room.getUsing() + "\t   "
-											+ room.getUser().getUserName() + "\t  "
+											+ room.getUsing() + "   ");
+									if(room.getUsing()) //사용중이면
+									{
+											System.out.print(room.getUser().getUserName() + "\t  "
 											+ room.getUser().getUserPhoneNum());
+									}
+									System.out.println();
 								}
 							}
 							break;
 							
-						case 5: // 이전 메뉴로 돌아가기
+						case 5: //매출 정보 보기
+							
+							ArrayList<Sales> salesList = new ArrayList<Sales>();
+							
+							//날짜 정보 포맷 설정
+							SimpleDateFormat dateFormat = new SimpleDateFormat("MM월 dd일 aa hh시 mm분 ss초");
+							
+							salesList = mg.getSalesList(); //매출 리스트 받아오기
+							if(salesList.isEmpty()) //salesList가 비었을 때
+							{
+								System.out.println("There are no sales information registered.");
+							}
+							else //salesList에 정보가 있을 때
+							{
+								System.out.println("[ Room sales Infomation ]");
+								System.out.println("Payment Date    \t   User Name    User Phone    Used Time    Bill");
+								System.out.println("------------------------------------------------------------------------");
+								
+								for(Sales sales:salesList)
+								{
+									//결제일 날짜 포맷에 맞도록 출력
+									String paymentDate = dateFormat.format(sales.getPaymentDate().getTime());
+									System.out.println(paymentDate + "   "
+											+ sales.getPayedUser().getUserName() + "\t\t"
+											+ sales.getPayedUser().getUserPhoneNum() + "\t\t"
+											+ sales.getUsedTime() + "\t   "
+											+ sales.getPayedBill());
+								}
+							}
+							break;
+							
+						case 6: // 이전 메뉴로 돌아가기
 							managerMode = false;
 							break;
 							
-						case 6: // 종료
+						case 7: // 종료
 							systemExit = true;
 							managerMode = false;
 							break;
@@ -491,11 +557,16 @@ public class UI
 				System.out.println();
 			}
 
+			//파일에 방정보&매출정보 저장
 			try
 			{
 				roomInfoOut = new ObjectOutputStream(new FileOutputStream(roomInfoFile));
+				salesInfoOut = new ObjectOutputStream(new FileOutputStream(salesInfoFile));
 				// 방 정보 파일에 쓰기
 				mg.writeRoomInfo(roomInfoOut);
+				//매출 정보 파일에 쓰기
+				mg.writeSalesInfo(salesInfoOut);
+				
 			} catch (FileNotFoundException fnfe) {
 				System.out.println("The file could not be found.");
 			} catch (IOException ioe) {
@@ -503,6 +574,7 @@ public class UI
 			} finally {
 				try {
 					roomInfoOut.close();
+					salesInfoOut.close();
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
