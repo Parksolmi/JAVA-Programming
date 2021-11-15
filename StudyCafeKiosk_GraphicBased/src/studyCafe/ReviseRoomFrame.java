@@ -67,23 +67,31 @@ public class ReviseRoomFrame extends JFrame {
 		btnNewButton = new JButton("Revise");
 		btnNewButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				//방 정보 수정
-				try {
-					//인원 수정
-					mg.changeCapacity(roomName, Integer.parseInt(capacity.getText()));
-					//가격 수정
-					mg.changePricePerHour(roomName, Integer.parseInt(price.getText()));
-					//이름 수정
-					mg.changeRoomName(roomName, name.getText());
-					
-					//테이블 내용 변경
-					defaultMode.setValueAt(name.getText(), row, 0);
-					defaultMode.setValueAt(capacity.getText(), row, 1);
-					defaultMode.setValueAt(price.getText(), row, 2);
-					
-					setVisible(false);
-				} catch (Exception e1) {
-					e1.printStackTrace();
+				
+				if(!mg.isRoomExist(name.getText())) //방 이름이 없다면
+				{
+					//방 정보 수정
+					try {
+						//인원 수정
+						mg.changeCapacity(roomName, Integer.parseInt(capacity.getText()));
+						//가격 수정
+						mg.changePricePerHour(roomName, Integer.parseInt(price.getText()));
+						//이름 수정
+						mg.changeRoomName(roomName, name.getText());
+						
+						//테이블 내용 변경
+						defaultMode.setValueAt(name.getText(), row, 0);
+						defaultMode.setValueAt(capacity.getText(), row, 1);
+						defaultMode.setValueAt(price.getText(), row, 2);
+						
+						setVisible(false);
+					} catch (Exception e1) {
+						e1.printStackTrace();
+					}
+				}
+				else //해당 방 이름이 존재한다면
+				{
+					MessageFrame mf = new MessageFrame(name.getText() + " is already exist");
 				}
 				
 				

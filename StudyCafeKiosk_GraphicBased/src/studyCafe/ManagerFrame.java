@@ -108,7 +108,6 @@ class ManagerFrame {
 				
 				if(!emptyRoomList.isEmpty()) //비어 있지 않다면
 				{
-					System.out.println(defaultModel.getRowCount());
 					//테이블의 모든 행 삭제
 					for(int row=defaultModel.getRowCount()-1; row >=0; row--)
 					{

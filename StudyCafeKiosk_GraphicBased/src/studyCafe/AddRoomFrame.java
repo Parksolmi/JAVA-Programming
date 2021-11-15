@@ -70,19 +70,26 @@ public class AddRoomFrame extends JFrame {
 				int roomCapacity = Integer.parseInt(capacity.getText());
 				int roomPrice = Integer.parseInt(price.getText());
 				
-				//방 만들기
-				mg.createRoom(roomName, roomCapacity, roomPrice);
-				
-				//테이블에 추가
-				String newRowArr[] = new String[4];
-				int index = 0;
-				newRowArr[index] = name.getText(); index++;
-				newRowArr[index] = capacity.getText(); index++;
-				newRowArr[index] = price.getText(); index++;
-				newRowArr[index] = "Empty";
-				
-				DefaultTableModel tableModel = (DefaultTableModel) roomTable.getModel();
-				tableModel.addRow(newRowArr);
+				if(!mg.isRoomExist(roomName)) //해당 방 이름이 존재하지 않는다면
+				{
+					//방 만들기
+					mg.createRoom(roomName, roomCapacity, roomPrice);
+					
+					//테이블에 추가
+					String newRowArr[] = new String[4];
+					int index = 0;
+					newRowArr[index] = name.getText(); index++;
+					newRowArr[index] = capacity.getText(); index++;
+					newRowArr[index] = price.getText(); index++;
+					newRowArr[index] = "Empty";
+					
+					DefaultTableModel tableModel = (DefaultTableModel) roomTable.getModel();
+					tableModel.addRow(newRowArr);
+				}
+				else //해당 방 이름이 존재하면
+				{
+					MessageFrame mf = new MessageFrame(roomName + " is already exist");
+				}
 				
 				setVisible(false);
 			}

@@ -140,7 +140,25 @@ public class Management {
 		salesList = (ArrayList<Sales>) ois.readObject();
 	}
 	//결제 로그 날짜로 찾기
-	
+	public ArrayList<Sales> salesForTheDay(int theYear, int theMonth, int theDay)
+	{
+		ArrayList<Sales> salesListForTheDay = new ArrayList<Sales>();
+		
+		for(Sales sales : salesList)
+		{
+			//매출 리스트에 저장된 객체의 날짜
+			int sYear = sales.getPaymentDate().get(Calendar.YEAR);
+			int sMonth = sales.getPaymentDate().get(Calendar.MONTH) + 1;
+			int sDate = sales.getPaymentDate().get(Calendar.DATE);
+			
+			if(theYear==sYear && theMonth==sMonth && theDay==sDate)
+			{
+				salesListForTheDay.add(sales);
+			}
+		}
+		
+		return salesListForTheDay;
+	}
 	//일 누적 매출 계산
 	public int salesForDay(GregorianCalendar day)
 	{
@@ -152,11 +170,11 @@ public class Management {
 		
 		for(Sales sales : salesList)
 		{
-			int year = sales.getPaymentDate().get(Calendar.YEAR);
-			int month = sales.getPaymentDate().get(Calendar.MONTH);
-			int date = sales.getPaymentDate().get(Calendar.DATE);
+			int sYear = sales.getPaymentDate().get(Calendar.YEAR);
+			int sMonth = sales.getPaymentDate().get(Calendar.MONTH);
+			int sDate = sales.getPaymentDate().get(Calendar.DATE);
 			
-			if(dayYear==year && dayMonth==month && dayDate==date)
+			if(dayYear==sYear && dayMonth==sMonth && dayDate==sDate)
 			{
 				salesForday += sales.getPayedBill();
 			}
@@ -166,7 +184,26 @@ public class Management {
 	}
 
 	//월 누적 매출 계산
-	
+	public int salesForMonth(GregorianCalendar month)
+	{
+		int salesForMonth = 0;
+		
+		int monthYear = month.get(Calendar.YEAR);
+		int monthMonth = month.get(Calendar.MONTH);
+		
+		for(Sales sales : salesList)
+		{
+			int sYear = sales.getPaymentDate().get(Calendar.YEAR);
+			int sMonth = sales.getPaymentDate().get(Calendar.MONTH);
+			
+			if(monthYear == sYear && monthMonth == sMonth)
+			{
+				salesForMonth += sales.getPayedBill();
+			}
+		}
+		
+		return salesForMonth;
+	}
 	//매출 리스트에 매출 정보 추가
 	public void addSalesList(String roomName)
 	{
