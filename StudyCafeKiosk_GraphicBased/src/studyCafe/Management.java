@@ -2,6 +2,8 @@ package studyCafe;
 
 import java.io.*;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.GregorianCalendar;
 
 public class Management {
 	private ArrayList<Room> roomList = new ArrayList<Room>(); //방 객체를 담는 리스트
@@ -43,6 +45,7 @@ public class Management {
 		Room room = new Room(roomName);
 		return roomList.indexOf(room);
 	}
+	
 	// roomTable에서 해당 룸 이름을 가진 방이 있는지 검사하는 함수
 	public boolean isRoomExist (String roomName)
 	{
@@ -58,10 +61,15 @@ public class Management {
 	
 	//manager 기능
 	//managerID검사하는 함수
-	boolean checkManagerID(String managerID)
+	public boolean checkManagerID(String managerID)
 	{
 		if(this.managerID.equals(managerID)) return true;
 		else return false;
+	}
+	//managerID변경하는 함수
+	public void reviseManagerID(String newManagerID)
+	{
+		this.managerID = newManagerID;
 	}
 	//룸 생성
 	public void createRoom(String roomName, int capacity, int pricePerHour)
@@ -108,6 +116,16 @@ public class Management {
 		return roomList.get(roomIndex).getPricePerHour();
 	}
 	
+	//아이디 파일에 저장하기
+	public void writeID(DataOutputStream dos) throws Exception
+	{
+		dos.writeUTF(managerID);
+	}
+	//아이디 파일에서 읽어오기
+	public void readID(DataInputStream dis) throws Exception
+	{
+		managerID = dis.readUTF();
+	}
 	
 	//매출
 	//결제 로그 기록하기
@@ -124,7 +142,29 @@ public class Management {
 	//결제 로그 날짜로 찾기
 	
 	//일 누적 매출 계산
-	
+	public int salesForDay(GregorianCalendar day)
+	{
+		int salesForday = 0;
+		
+		int dayYear = day.get(Calendar.YEAR);
+		int dayMonth = day.get(Calendar.MONTH);
+		int dayDate = day.get(Calendar.DATE);
+		
+		for(Sales sales : salesList)
+		{
+			int year = sales.getPaymentDate().get(Calendar.YEAR);
+			int month = sales.getPaymentDate().get(Calendar.MONTH);
+			int date = sales.getPaymentDate().get(Calendar.DATE);
+			
+			if(dayYear==year && dayMonth==month && dayDate==date)
+			{
+				salesForday += sales.getPayedBill();
+			}
+		}
+		
+		return salesForday;
+	}
+
 	//월 누적 매출 계산
 	
 	//매출 리스트에 매출 정보 추가
@@ -139,7 +179,7 @@ public class Management {
 	
 	//User 기능	
 	//수용 인원(capacity)으로 빈 방 검색하기
-	public ArrayList<Room> searchEmptyRoomByCapacity(int capacity)
+	public ArrayList<Room> searchRoomByCapacity(int capacity)
 	{
 		roomTableSize = roomList.size(); //roomTable의 크기
 		ArrayList<Room> emptyRoomTable = new ArrayList<Room>(); //roomTable에서 빈 방만 담은 리스트
@@ -147,7 +187,7 @@ public class Management {
 		for(int index = 0; index<roomTableSize; index++)
 		{
 			int roomCapacity = roomList.get(index).getCapacity();
-			if(capacity <= roomCapacity && roomList.get(index).getUsing()==false)
+			if(capacity <= roomCapacity)
 			{
 				emptyRoomTable.add(roomList.get(index));
 			}
@@ -160,16 +200,13 @@ public class Management {
 	public Room getRoom(String roomName) throws Exception
 	{
 		// 방찾기
-		int roomIndex = searchRoomIndex(roomName);
-		return roomList.get(roomIndex);
+		return searchRoom(roomName);
 	}
 	// 체크인
 	public boolean checkIn(String roomName, User user) throws Exception 
 	{
-		// 방찾기
-		int roomIndex = searchRoomIndex(roomName);
 		//체크인하기
-		Room room = roomList.get(roomIndex);
+		Room room = searchRoom(roomName);
 		if(room.getUsing()) //사용 중(체크인 불가능)
 		{
 			return false;
@@ -227,6 +264,5 @@ public class Management {
 	{
 		roomList = (ArrayList<Room>) ois.readObject();
 	}
-	
 	
 }
