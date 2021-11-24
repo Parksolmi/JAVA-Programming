@@ -23,10 +23,11 @@ class ManagerFrame {
 	{
 		//매니저 프레임 생성
 		managerFrame = new JFrame("Manager Mode");
+		managerFrame.getContentPane().setBackground(new Color(176, 196, 222));
 		//프레임 크기
-		managerFrame.setSize(600, 600);
+		managerFrame.setSize(900, 700);
 		//윈도우 위치 설정
-		managerFrame.setLocation(600, 200);
+		managerFrame.setLocation(500, 200);
 		//content pane 생성
 		Container managerCP = managerFrame.getContentPane();
 		//x버튼 눌렀을 때 이벤트처리
@@ -38,7 +39,10 @@ class ManagerFrame {
 		
 		//1) 홈 버튼
 		homeButton = new JButton("Home");
-		homeButton.setBounds(500, 20, 70, 40);
+		homeButton.setBackground(new Color(119, 136, 153));
+		homeButton.setForeground(Color.WHITE);
+		homeButton.setFont(new Font("굴림", Font.BOLD, 14));
+		homeButton.setBounds(20, 33, 84, 37);
 		managerCP.add(homeButton); //content Pane에 추가
 		//이벤트
 		homeButton.addActionListener(new HomeButtonAction());
@@ -48,9 +52,10 @@ class ManagerFrame {
 		String colNames[] = { "Name" , "Capacity" , "Price", "Availability"}; //타이틀바
 		DefaultTableModel defaultModel = new DefaultTableModel(colNames, 0);
 		roomTable = new JTable(defaultModel);
+		roomTable.setBackground(SystemColor.info);
 		//스크롤 페인에 테이블 넣기
 		JScrollPane roomTablePane = new JScrollPane(roomTable);
-		roomTablePane.setBounds(20, 80, 550, 350); //크기 조정
+		roomTablePane.setBounds(20, 91, 548, 543); //크기 조정
 		
 		//룸 정보 리스트 테이블에 넣기
 		if(!mg.getRoomList().isEmpty()) //비어 있지 않다면
@@ -75,47 +80,94 @@ class ManagerFrame {
 			}
 		}
 		
-		managerCP.add(roomTablePane); //content Pane에 추가
+		managerCP.add(roomTablePane);
 		
-		// 3) capacity 검색
-		// 패널 생성
-		JPanel capacityPanel = new JPanel();
-
+		//3) 상단메뉴
 		JLabel capacityLabel = new JLabel("Capacity : ");
-		capacityLabel.setFont(new Font("굴림", Font.PLAIN, 13));
-		capacityPanel.add(capacityLabel);
+		capacityLabel.setFont(new Font("굴림", Font.BOLD, 18));
+		capacityLabel.setBounds(193, 36, 103, 33);
+		managerFrame.getContentPane().add(capacityLabel);
+		
 		JTextField capacity = new JTextField(8);
-		capacityPanel.add(capacity);
+		capacity.setBounds(293, 38, 94, 31);
+		managerFrame.getContentPane().add(capacity);
+		
 		JButton button = new JButton("Search");
+		button.setBackground(new Color(119, 136, 153));
+		button.setForeground(Color.WHITE);
+		button.setFont(new Font("굴림", Font.BOLD, 14));
 		// search버튼 이벤트
 		button.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				
-				//입력한 인원
+
+				// 입력한 인원
 				int capacityToSearch;
-				if(capacity.getText().equals("")) //아무 것도 입력하지 않으면 0으로 간주
+				if (capacity.getText().equals("")) // 아무 것도 입력하지 않으면 0으로 간주
 				{
 					capacityToSearch = 0;
-				}
-				else
-				{
+				} else {
 					capacityToSearch = Integer.parseInt(capacity.getText());
 				}
-				
-				//해당 인원의 빈 방을 찾아서 리스트에 저장
+
+				// 해당 인원의 빈 방을 찾아서 리스트에 저장
 				ArrayList<Room> emptyRoomList = new ArrayList<Room>();
 				emptyRoomList = mg.searchRoomByCapacity(capacityToSearch);
-				
-				if(!emptyRoomList.isEmpty()) //비어 있지 않다면
+
+				if (!emptyRoomList.isEmpty()) // 비어 있지 않다면
 				{
-					//테이블의 모든 행 삭제
-					for(int row=defaultModel.getRowCount()-1; row >=0; row--)
-					{
+					// 테이블의 모든 행 삭제
+					for (int row = defaultModel.getRowCount() - 1; row >= 0; row--) {
 						defaultModel.removeRow(row);
 					}
-					
+
 					String rowArr[] = new String[4];
-					for(Room room : emptyRoomList)
+					for (Room room : emptyRoomList) {
+						int i = 0;
+						rowArr[i] = room.getRoomName();
+						i++;
+						rowArr[i] = Integer.toString(room.getCapacity());
+						i++;
+						rowArr[i] = Integer.toString(room.getPricePerHour());
+						i++;
+						if (room.getUsing()) // 사용중이면
+						{
+							rowArr[i] = "Occupied";
+						} else // 비었으면
+						{
+							rowArr[i] = "Empty";
+						}
+
+						defaultModel.addRow(rowArr);
+					}
+
+				} else // 비어있다면
+				{
+					MessageFrame ef = new MessageFrame("There is no room for " + capacityToSearch);
+				}
+			}
+		});
+		
+		button.setBounds(396, 33, 84, 37);
+		managerFrame.getContentPane().add(button);
+		
+		JButton btnAll = new JButton("All");
+		btnAll.setBackground(new Color(119, 136, 153));
+		btnAll.setForeground(Color.WHITE);
+		btnAll.setFont(new Font("굴림", Font.BOLD, 14));
+		btnAll.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				capacity.setText("");
+				
+				// 테이블의 모든 행 삭제
+				for (int row = defaultModel.getRowCount() - 1; row >= 0; row--) {
+					defaultModel.removeRow(row);
+				}
+				
+				//전체 룸 정보 리스트 테이블에 넣기
+				if(!mg.getRoomList().isEmpty()) //비어 있지 않다면
+				{
+					String rowArr[] = new String[4];
+					for(Room room : mg.getRoomList())
 					{
 						int i=0;
 						rowArr[i] = room.getRoomName(); i++;
@@ -132,44 +184,44 @@ class ManagerFrame {
 						
 						defaultModel.addRow(rowArr);
 					}
-					
-				}
-				else //비어있다면
-				{
-					MessageFrame ef = new MessageFrame("There is no room for " + capacityToSearch);
 				}
 			}
 		});
-		capacityPanel.add(button);
-		capacityPanel.setBounds(20, 20, 253, 40); // 패널 크기 조정
-
-		managerCP.add(capacityPanel); // content Pane에 추가
+		btnAll.setBounds(486, 34, 84, 37);
+		managerFrame.getContentPane().add(btnAll);
+		
 		
 		//4) 사용자 정보 입력
-		//패널 생성
-		JPanel userInfoPanel = new JPanel();
-		userInfoPanel.setBounds(20, 450, 550, 40);
-		
 		//이름
-		JLabel name = new JLabel("Name : ");
-		name.setFont(new Font("Monospaced", Font.BOLD, 20));
-		userInfoPanel.add(name);
-		JTextField enteredName = new JTextField(10);
-		userInfoPanel.add(enteredName);
+		JLabel lblNewLabel = new JLabel("Name           :");
+		lblNewLabel.setFont(new Font("굴림", Font.BOLD, 20));
+		lblNewLabel.setBounds(584, 483, 152, 37);
+		managerFrame.getContentPane().add(lblNewLabel);
 		
-		//핸드폰 번호
-		JLabel phoneNum = new JLabel("  Phone Number : ");
-		phoneNum.setFont(new Font("Monospaced", Font.BOLD, 20));
-		userInfoPanel.add(phoneNum);
-		JTextField enteredPhone = new JTextField(10);
-		userInfoPanel.add(enteredPhone);
+		JTextField enteredName = new JTextField();
+		enteredName.setBounds(739, 483, 133, 33);
+		managerFrame.getContentPane().add(enteredName);
+		enteredName.setColumns(10);
 		
-		managerCP.add(userInfoPanel); //content Pane에 추가
+		//전화번호
+		JLabel lblPhoneNumber = new JLabel("Phone Number : ");
+		lblPhoneNumber.setFont(new Font("굴림", Font.BOLD, 18));
+		lblPhoneNumber.setBounds(581, 513, 152, 46);
+		managerFrame.getContentPane().add(lblPhoneNumber);
+		
+		JTextField enteredPhone = new JTextField();
+		enteredPhone.setColumns(10);
+		enteredPhone.setBounds(739, 520, 133, 33);
+		managerFrame.getContentPane().add(enteredPhone);
+		
 		
 		//5) check-in/out 버튼
 		//체크 인 버튼
 		JButton checkInButton = new JButton("Check-In");
-		checkInButton.setBounds(140, 500, 150, 40);
+		checkInButton.setBackground(new Color(119, 136, 153));
+		checkInButton.setForeground(Color.WHITE);
+		checkInButton.setFont(new Font("굴림", Font.BOLD, 15));
+		checkInButton.setBounds(584, 591, 138, 43);
 		
 		//체크 인 버튼 이벤트
 		checkInButton.addActionListener(new ActionListener() {
@@ -188,7 +240,7 @@ class ManagerFrame {
 				{
 					if(enteredName.getText().equals("") || enteredPhone.getText().equals("")) //사용자 정보를 입력하지 않은 경우
 					{
-						MessageFrame ef = new MessageFrame("Please enter the use infromation");
+						MessageFrame ef = new MessageFrame("Please enter the user infromation");
 					}
 					else //사용자 정보를 입력 한 경우
 					{
@@ -240,9 +292,9 @@ class ManagerFrame {
 					mg.writeRoomInfo(roomInfoOut);
 					
 				} catch (FileNotFoundException fnfe) {
-					System.out.println("The file could not be found.");
+					MessageFrame mf = new MessageFrame("The file could not be found.");
 				} catch (IOException ioe) {
-					System.out.println("The file cannot be output.");
+					MessageFrame mf = new MessageFrame("The file cannot be output.");
 				} catch (Exception e1) {
 					e1.printStackTrace();
 				} finally {
@@ -263,7 +315,10 @@ class ManagerFrame {
 		
 		//체크 아웃 버튼
 		JButton checkOutButton = new JButton("Check-Out");
-		checkOutButton.setBounds(310, 500, 150, 40);
+		checkOutButton.setBackground(new Color(119, 136, 153));
+		checkOutButton.setForeground(Color.WHITE);
+		checkOutButton.setFont(new Font("굴림", Font.BOLD, 15));
+		checkOutButton.setBounds(732, 591, 138, 43);
 		
 		//체크 아웃 버튼 이벤트
 		checkOutButton.addActionListener(new ActionListener() {
@@ -310,6 +365,10 @@ class ManagerFrame {
 		});
 
 		managerCP.add(checkOutButton);
+		
+		
+		
+		
 
 	}
 	

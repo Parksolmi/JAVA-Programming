@@ -5,9 +5,10 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 
-public class Management {
+@SuppressWarnings("serial")
+public class Management implements Serializable{
+	
 	private ArrayList<Room> roomList = new ArrayList<Room>(); //방 객체를 담는 리스트
-	private int roomTableSize; //roomTable리스트의 크기
 	private String managerID; //관리자UI로 들어가기 위한 관리자ID;
 	private ArrayList<Sales> salesList = new ArrayList<Sales>(); //매출 리스트
 	
@@ -23,11 +24,6 @@ public class Management {
 	}
 	
 	//getter&setter
-	public int getRoomTableSize()
-	{
-		roomTableSize = roomList.size();
-		return roomTableSize;
-	}
 	public ArrayList<Room> getRoomList()
 	{
 		return roomList;
@@ -36,7 +32,6 @@ public class Management {
 	{
 		return salesList;
 	}
-	
 	
 	
 	// roomTable에서 해당 룸 이름을 가진 방의 index를 반환하는 함수
@@ -116,29 +111,7 @@ public class Management {
 		return roomList.get(roomIndex).getPricePerHour();
 	}
 	
-	//아이디 파일에 저장하기
-	public void writeID(DataOutputStream dos) throws Exception
-	{
-		dos.writeUTF(managerID);
-	}
-	//아이디 파일에서 읽어오기
-	public void readID(DataInputStream dis) throws Exception
-	{
-		managerID = dis.readUTF();
-	}
-	
 	//매출
-	//결제 로그 기록하기
-	public void writeSalesInfo(ObjectOutputStream oos) throws Exception
-	{
-		oos.writeObject(salesList);
-	}
-	//결제 로그 읽어오기
-	@SuppressWarnings("unchecked")
-	public void readSalesInfo(ObjectInputStream ois) throws Exception
-	{
-		salesList = (ArrayList<Sales>) ois.readObject();
-	}
 	//결제 로그 날짜로 찾기
 	public ArrayList<Sales> salesForTheDay(int theYear, int theMonth, int theDay)
 	{
@@ -218,7 +191,7 @@ public class Management {
 	//수용 인원(capacity)으로 빈 방 검색하기
 	public ArrayList<Room> searchRoomByCapacity(int capacity)
 	{
-		roomTableSize = roomList.size(); //roomTable의 크기
+		int roomTableSize = roomList.size(); //roomTable의 크기
 		ArrayList<Room> emptyRoomTable = new ArrayList<Room>(); //roomTable에서 빈 방만 담은 리스트
 		
 		for(int index = 0; index<roomTableSize; index++)
@@ -290,16 +263,40 @@ public class Management {
 		return userPay;
 	}
 	
+	//파일
 	//방 정보 쓰기
-	void writeRoomInfo(ObjectOutputStream oos) throws Exception
+	public void writeRoomInfo(ObjectOutputStream oos) throws Exception
 	{
 		oos.writeObject(roomList);
 	}
 	//방 정보 읽기
 	@SuppressWarnings("unchecked")
-	void readRoomInfo(ObjectInputStream ois) throws Exception
+	public void readRoomInfo(ObjectInputStream ois) throws Exception
 	{
 		roomList = (ArrayList<Room>) ois.readObject();
 	}
 	
+	//매니지먼트 ID 정보 쓰기
+	public void writeID(DataOutputStream dos) throws Exception
+	{
+		dos.writeUTF(managerID);
+	}
+	//매니지먼트 ID 정보 읽기
+	public void readID(DataInputStream dis) throws Exception
+	{
+		managerID = dis.readUTF();
+	}
+	
+	//매출 로그 기록하기
+	public void writeSalesInfo(ObjectOutputStream oos) throws Exception 
+	{
+		oos.writeObject(salesList);
+	}
+
+	//매출 로그 읽어오기
+	@SuppressWarnings("unchecked")
+	public void readSalesInfo(ObjectInputStream ois) throws Exception 
+	{
+		salesList = (ArrayList<Sales>) ois.readObject();
+	}
 }

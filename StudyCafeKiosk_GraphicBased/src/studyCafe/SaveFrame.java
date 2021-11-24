@@ -1,7 +1,5 @@
 package studyCafe;
 
-import java.awt.BorderLayout;
-import java.awt.EventQueue;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -15,30 +13,35 @@ import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.JTable;
 import javax.swing.SwingConstants;
-import javax.swing.border.EmptyBorder;
-import javax.swing.table.DefaultTableModel;
+import java.awt.Color;
 
+@SuppressWarnings("serial")
 public class SaveFrame extends JFrame {
 
 	private JPanel contentPane;
 
 	public SaveFrame(Management mg) {
+		//윈도우 타이틀 설정
+		this.setTitle("Save");
 		setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
-		setBounds(600, 400, 600, 300);
+		setBounds(680, 420, 600, 300);
 		contentPane = new JPanel();
+		contentPane.setBackground(new Color(112, 128, 144));
 		//레이아웃 설정(위치와 크기 자유지정)
 		contentPane.setLayout(null);
 		setContentPane(contentPane);
 		
 		JLabel lblNewLabel = new JLabel("Do you want to save the changes?");
+		lblNewLabel.setForeground(Color.WHITE);
 		lblNewLabel.setHorizontalAlignment(SwingConstants.CENTER);
 		lblNewLabel.setFont(new Font("굴림", Font.BOLD, 22));
 		lblNewLabel.setBounds(87, 42, 428, 119);
 		contentPane.add(lblNewLabel);
 		
 		JButton btnNewButton = new JButton("Yes");
+		btnNewButton.setForeground(Color.WHITE);
+		btnNewButton.setBackground(new Color(25, 25, 112));
 		btnNewButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				
@@ -54,9 +57,9 @@ public class SaveFrame extends JFrame {
 					mg.writeRoomInfo(roomInfoOut);
 					
 				} catch (FileNotFoundException fnfe) {
-					System.out.println("The file could not be found.");
+					MessageFrame mf = new MessageFrame("The file could not be found.");
 				} catch (IOException ioe) {
-					System.out.println("The file cannot be output.");
+					MessageFrame mf = new MessageFrame("The file cannot be output.");
 				} catch (Exception e1) {
 					// TODO Auto-generated catch block
 					e1.printStackTrace();
@@ -78,6 +81,8 @@ public class SaveFrame extends JFrame {
 		contentPane.add(btnNewButton);
 		
 		JButton btnNo = new JButton("No");
+		btnNo.setForeground(Color.WHITE);
+		btnNo.setBackground(new Color(25, 25, 112));
 		btnNo.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				setVisible(false);

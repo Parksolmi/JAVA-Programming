@@ -22,10 +22,11 @@ class PayFrame extends JFrame {
 	public PayFrame(JTable roomTable, int row, Management mg) throws Exception {
 		// Pay프레임 생성
 		JFrame payFrame = new JFrame("Pay");
+		payFrame.getContentPane().setBackground(new Color(112, 128, 144));
 		// 프레임 크기
 		payFrame.setSize(600, 300);
 		// 윈도우 위치 설정
-		payFrame.setLocation(600, 400);
+		payFrame.setLocation(700, 450);
 		// content pane 생성
 		Container payCP = payFrame.getContentPane();
 		// x버튼 눌렀을 때 이벤트처리
@@ -49,6 +50,7 @@ class PayFrame extends JFrame {
 
 		// JLabel 생성 : 입실 시간 & 퇴실 시간 보여주기
 		JLabel time = new JLabel();
+		time.setForeground(Color.WHITE);
 		time.setText("<html> Check-in time : " + checkInTime + "<br> Check-out time : " + checkOutTime + "</html>");
 		time.setBounds(100, 30, 472, 60);
 		time.setFont(new Font("Monospaced", Font.BOLD, 15));
@@ -57,6 +59,7 @@ class PayFrame extends JFrame {
 
 		// JLabel 생성 : 지불할 가격 보여주기
 		JLabel price = new JLabel();
+		price.setForeground(Color.WHITE);
 		price.setText("<html> Price : " + pay + " won <br> Do you want to pay? </html>");
 		price.setFont(new Font("Monospaced", Font.BOLD, 20));
 		price.setBounds(200, 93, 372, 75);
@@ -65,6 +68,9 @@ class PayFrame extends JFrame {
 		
 		//버튼
 		JButton btnNewButton = new JButton("Yes");
+		btnNewButton.setBackground(new Color(25, 25, 112));
+		btnNewButton.setForeground(Color.WHITE);
+		btnNewButton.setFont(new Font("굴림", Font.BOLD, 20));
 		btnNewButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				try {
@@ -118,6 +124,9 @@ class PayFrame extends JFrame {
 		payFrame.getContentPane().add(btnNewButton);
 		
 		JButton btnNewButton_1 = new JButton("No");
+		btnNewButton_1.setBackground(new Color(25, 25, 112));
+		btnNewButton_1.setForeground(Color.WHITE);
+		btnNewButton_1.setFont(new Font("굴림", Font.BOLD, 20));
 		btnNewButton_1.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				//이전 프레임으로 돌아가기

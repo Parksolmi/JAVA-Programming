@@ -12,6 +12,7 @@ import javax.swing.JTextField;
 import javax.swing.JButton;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
+import java.awt.Color;
 
 @SuppressWarnings("serial")
 public class AddRoomFrame extends JFrame {
@@ -21,26 +22,33 @@ public class AddRoomFrame extends JFrame {
 	private JButton btnCancel;
 
 	public AddRoomFrame(Management mg,JTable roomTable) {
+		
+		//윈도우 타이틀 설정
+		this.setTitle("Add Room");
 		setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
 		setBounds(600, 400, 600, 300);
 		contentPane = new JPanel();
+		contentPane.setBackground(new Color(112, 128, 144));
 		//레이아웃 설정(위치와 크기 자유지정)
 		contentPane.setLayout(null);
 		setContentPane(contentPane);
 		
 		JLabel lblNewLabel = new JLabel("Name        :");
+		lblNewLabel.setForeground(Color.WHITE);
 		lblNewLabel.setFont(new Font("굴림", Font.BOLD, 20));
 		lblNewLabel.setHorizontalAlignment(SwingConstants.LEFT);
 		lblNewLabel.setBounds(104, 39, 137, 35);
 		contentPane.add(lblNewLabel);
 		
 		JLabel lblCapacity = new JLabel("Capacity    :");
+		lblCapacity.setForeground(Color.WHITE);
 		lblCapacity.setHorizontalAlignment(SwingConstants.LEFT);
 		lblCapacity.setFont(new Font("굴림", Font.BOLD, 20));
 		lblCapacity.setBounds(104, 77, 137, 35);
 		contentPane.add(lblCapacity);
 		
 		JLabel lblPrice = new JLabel("Price         :");
+		lblPrice.setForeground(Color.WHITE);
 		lblPrice.setHorizontalAlignment(SwingConstants.LEFT);
 		lblPrice.setFont(new Font("굴림", Font.BOLD, 20));
 		lblPrice.setBounds(104, 112, 137, 35);
@@ -62,36 +70,52 @@ public class AddRoomFrame extends JFrame {
 		contentPane.add(price);
 		
 		btnNewButton = new JButton("Add");
+		btnNewButton.setForeground(Color.WHITE);
+		btnNewButton.setBackground(new Color(25, 25, 112));
 		btnNewButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				
-				//JTextField 타입 별로 가져오기
-				String roomName = name.getText();
-				int roomCapacity = Integer.parseInt(capacity.getText());
-				int roomPrice = Integer.parseInt(price.getText());
-				
-				if(!mg.isRoomExist(roomName)) //해당 방 이름이 존재하지 않는다면
+				//JTextField가 비어져있다면
+				if(name.getText().equals("") || capacity.getText().equals("") || price.getText().equals(""))
 				{
-					//방 만들기
-					mg.createRoom(roomName, roomCapacity, roomPrice);
-					
-					//테이블에 추가
-					String newRowArr[] = new String[4];
-					int index = 0;
-					newRowArr[index] = name.getText(); index++;
-					newRowArr[index] = capacity.getText(); index++;
-					newRowArr[index] = price.getText(); index++;
-					newRowArr[index] = "Empty";
-					
-					DefaultTableModel tableModel = (DefaultTableModel) roomTable.getModel();
-					tableModel.addRow(newRowArr);
+					MessageFrame mf = new MessageFrame("Please enter all the data.");
 				}
-				else //해당 방 이름이 존재하면
+				else
 				{
-					MessageFrame mf = new MessageFrame(roomName + " is already exist");
+					//JTextField 타입 별로 가져오기
+					String roomName = name.getText();
+					int roomCapacity = Integer.parseInt(capacity.getText());
+					int roomPrice = Integer.parseInt(price.getText());
+					
+					if(!mg.isRoomExist(roomName)) //해당 방 이름이 존재하지 않는다면
+					{
+						//방 만들기
+						mg.createRoom(roomName, roomCapacity, roomPrice);
+						
+						//테이블에 추가
+						String newRowArr[] = new String[4];
+						int index = 0;
+						newRowArr[index] = name.getText(); index++;
+						newRowArr[index] = capacity.getText(); index++;
+						newRowArr[index] = price.getText(); index++;
+						newRowArr[index] = "Empty";
+						
+						DefaultTableModel tableModel = (DefaultTableModel) roomTable.getModel();
+						tableModel.addRow(newRowArr);
+	
+						setVisible(false);
+						
+						//saveFlag true로 변경
+						if(OwnerFrame.getSaveFlag() == false)
+						{
+							OwnerFrame.setSaveFlagTrue();
+						}
+					}
+					else //해당 방 이름이 존재하면
+					{
+						MessageFrame mf = new MessageFrame(roomName + " is already exist");
+					}
 				}
-				
-				setVisible(false);
 			}
 		});
 		btnNewButton.setFont(new Font("굴림", Font.BOLD, 20));
@@ -99,6 +123,8 @@ public class AddRoomFrame extends JFrame {
 		contentPane.add(btnNewButton);
 		
 		btnCancel = new JButton("Cancel");
+		btnCancel.setForeground(Color.WHITE);
+		btnCancel.setBackground(new Color(25, 25, 112));
 		btnCancel.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				setVisible(false);
