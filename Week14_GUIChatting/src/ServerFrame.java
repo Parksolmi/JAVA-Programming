@@ -187,6 +187,7 @@ public class ServerFrame extends JFrame{
 		}
 	}
 	
+	
 	//메세지 보내기
 	void sendMessage() {
 		
