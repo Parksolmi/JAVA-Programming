@@ -1,12 +1,10 @@
 import javax.swing.*;
 
 import java.awt.*;
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.PrintWriter;
+import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.net.SocketException;
 
 import javax.swing.border.EmptyBorder;
 import java.awt.event.*;
@@ -21,8 +19,8 @@ public class ServerFrame extends JFrame{
 	private JButton btnNewButton_2;
 	
 	//메세지 주고 받을 버퍼
-	BufferedReader reader;
-	PrintWriter writer;
+	DataInputStream dis;
+	DataOutputStream dos;
 	
 	//소켓
 	ServerSocket serverSocket;
@@ -49,7 +47,7 @@ public class ServerFrame extends JFrame{
 		textArea.setEditable(false); //쓰지 못함
 		contentPane.add(textArea);
 		
-		JScrollPane scrollPane = new JScrollPane();
+		JScrollPane scrollPane = new JScrollPane(textArea);
 		scrollPane.setBounds(12, 61, 690, 393);
 		contentPane.add(scrollPane);
 		
@@ -70,10 +68,20 @@ public class ServerFrame extends JFrame{
 		btnNewButton_1.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 
-				// 스레드 생성 및 시작
-				ServerThread st = new ServerThread();
-				st.setDaemon(true); // 메인 종료시 스레드도 같이 종료
-				st.start(); // 스레드 시작
+				if(portAddress != null )
+				{
+					isExit = false;
+					
+					// 스레드 생성 및 시작
+					ServerThread st = new ServerThread();
+					st.setDaemon(true); // 메인 종료시 스레드도 같이 종료
+					st.start(); // 스레드 시작
+				}
+				else
+				{
+					textArea.append("포트 번호를 입력하세요.\n");
+				}
+				
 			}
 		});
 		btnNewButton_1.setBounds(591, 23, 111, 27);
@@ -114,6 +122,20 @@ public class ServerFrame extends JFrame{
 			public void actionPerformed(ActionEvent e) {
 				// 채팅 종료
 				isExit = true;
+				
+				try {
+					if (dis != null)
+						dis.close();
+					if (dos != null)
+						dos.close();
+					if (socket != null)
+						socket.close();
+					if (serverSocket != null)
+						serverSocket.close();
+
+				} catch (IOException e1) {
+					e1.printStackTrace();
+				}
 			}
 		});
 		btnNewButton.setFont(new Font("나눔고딕", Font.PLAIN, 15));
@@ -127,10 +149,10 @@ public class ServerFrame extends JFrame{
 			public void windowClosing(WindowEvent e) {
 				super.windowClosing(e);
 				try {
-					if (reader != null)
-						reader.close();
-					if (writer != null)
-						writer.close();
+					if (dis != null)
+						dis.close();
+					if (dos != null)
+						dos.close();
 					if (socket != null)
 						socket.close();
 					if (serverSocket != null)
@@ -160,30 +182,34 @@ public class ServerFrame extends JFrame{
 				textArea.append(socket.getInetAddress().getHostAddress() + "님이 접속하셨습니다.\n");
 				
 				// 통신을 위한 reader & writer
-				reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-				writer = new PrintWriter(socket.getOutputStream());
+				dis = new DataInputStream(socket.getInputStream());
+				dos = new DataOutputStream(socket.getOutputStream());
 
-				while (true) {
+				while (!isExit) {
 					//상대방이 보내온 메세지 읽기
-					String str = reader.readLine();
+					String str = dis.readUTF();
 					textArea.append("Client> " + str + "\n");
 					textArea.setCaretPosition(textArea.getText().length()); //스크롤 따라가도록
-					
-					if (isExit == true) {
-						textArea.append("채팅을 종료합니다.\n");
-						break;
-					}
 				}
-				
 			} catch (IOException e) {
-				textArea.append("클라이언트가 나갔습니다.\n");
+				textArea.append("클라이언트와 연결이 종료되었습니다.\n");
+			} catch (NumberFormatException nfe) {
+				textArea.append("포트 번호를 제대로 입력해주세요\n");
 			} finally {
 				try {
-					socket.close();
-				} catch (Exception ignored) {
+					if (dis != null)
+						dis.close();
+					if (dos != null)
+						dos.close();
+					if (socket != null)
+						socket.close();
+					if (serverSocket != null)
+						serverSocket.close();
+
+				} catch (IOException e1) {
+					e1.printStackTrace();
 				}
 			}
-
 		}
 	}
 	
@@ -198,18 +224,20 @@ public class ServerFrame extends JFrame{
 		
 		//채팅창에 표시
 		textArea.append("Server> " + msg + "\n");
-		textArea.setCaretPosition(textArea.getText().length()); //스크롤 따라가도록
-		
+		textArea.setCaretPosition(textArea.getText().length()); // 스크롤 따라가도록
+
 		Thread thread1 = new Thread() {
-			
+
 			public void run() {
 				try {
-					writer.write(msg);
-					writer.flush(); //버퍼 출력 및 비우기
-					
-				} catch(Exception e) {
+					dos.writeUTF(msg);
+					dos.flush(); // 버퍼 출력 및 비우기
+
+				} catch(SocketException se) {
+					textArea.append("채팅이 종료되었습니다. 다시 채팅을 원한다면 재접속 해주세요.\n");
+				} catch (Exception e) {
 					e.printStackTrace();
-				}
+				} 
 			}
 		};
 		thread1.start();

@@ -1,11 +1,11 @@
 import javax.swing.*;
 
 import java.awt.*;
-import java.io.BufferedReader;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.PrintWriter;
 import java.net.Socket;
+import java.net.SocketException;
 import java.net.UnknownHostException;
 
 import javax.swing.border.EmptyBorder;
@@ -21,9 +21,9 @@ public class ClientFrame extends JFrame{
 	private JTextField input;
 	private JButton btnNewButton_2;
 	
-	//메세지 주고 받을 버퍼
-	BufferedReader reader;
-	PrintWriter writer;
+	// 메세지 주고 받을 버퍼
+	DataInputStream dis;
+	DataOutputStream dos;
 	
 	//소켓
 	Socket socket;
@@ -48,7 +48,7 @@ public class ClientFrame extends JFrame{
 		textArea.setEditable(false); //쓰지 못함
 		contentPane.add(textArea);
 		
-		JScrollPane scrollPane = new JScrollPane();
+		JScrollPane scrollPane = new JScrollPane(textArea);
 		scrollPane.setBounds(12, 61, 690, 393);
 		contentPane.add(scrollPane);
 		
@@ -81,10 +81,27 @@ public class ClientFrame extends JFrame{
 		btnNewButton_1.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 
-				//스레드 생성 및 시작
-				ClientThread ct = new ClientThread();
-				ct.setDaemon(true);
-				ct.start();
+				if(ipAddress.getText() != null && portAddress.getText()!=null)
+				{
+					isExit = false;
+					
+					//스레드 생성 및 시작
+					ClientThread ct = new ClientThread();
+					ct.setDaemon(true);
+					ct.start();
+				}
+				else
+				{
+					if(ipAddress.getText() == null)
+					{
+						textArea.append("아이피 주소를 입력하세요.\n");
+					}
+					else
+					{
+						textArea.append("포트 번호를 입력하세요.\n");
+					}
+				}
+				
 			}
 		});
 		btnNewButton_1.setBounds(591, 23, 111, 27);
@@ -124,6 +141,18 @@ public class ClientFrame extends JFrame{
 			public void actionPerformed(ActionEvent e) {
 				// 채팅 종료
 				isExit = true;
+				
+				try {
+					if (dis != null)
+						dis.close();
+					if (dos != null)
+						dos.close();
+					if (socket != null)
+						socket.close();
+				} catch (IOException e1) {
+					e1.printStackTrace();
+				}
+				
 			}
 		});
 		btnNewButton.setFont(new Font("나눔고딕", Font.PLAIN, 15));
@@ -138,10 +167,10 @@ public class ClientFrame extends JFrame{
 			public void windowClosing(WindowEvent e) {
 				super.windowClosing(e);
 				try {
-					if (reader != null)
-						reader.close();
-					if (writer != null)
-						writer.close();
+					if (dis != null)
+						dis.close();
+					if (dos != null)
+						dos.close();
 					if (socket != null)
 						socket.close();
 					
@@ -156,49 +185,66 @@ public class ClientFrame extends JFrame{
 		public void run() {
 			try {
 				
-				//포트 번호 형변환
-				int portNum = Integer.parseInt(portAddress.getText());
+				int portNum;
 				
-				//소켓 생성
+				// 포트 번호 형변환
+				portNum = Integer.parseInt(portAddress.getText());
+
+				// 소켓 생성
 				socket = new Socket(ipAddress.getText(), portNum);
 				textArea.append("서버에 접속하였습니다.\n");
-				
+
 				// 통신을 위한 reader & writer
-				reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-				writer = new PrintWriter(socket.getOutputStream());
-				
-				//메세지 받기
-				while(true) {
-					String msg = reader.readLine();
+				dis = new DataInputStream(socket.getInputStream());
+				dos = new DataOutputStream(socket.getOutputStream());
+
+				// 메세지 받기
+				while (!isExit) {
+					String msg = dis.readUTF();
 					textArea.append("Server> " + msg + "\n");
 					textArea.setCaretPosition(textArea.getText().length());
-					
-					if (isExit == true) {
-						textArea.append("채팅을 종료합니다.\n");
-						break;
-					}
 				}
+				
 			} catch(UnknownHostException e) {
 				textArea.append("서버 주소가 잘못되었습니다.\n");
 			} catch(IOException e) {
 				textArea.append("서버와 연결이 끊겼습니다.\n");
+			} catch(NumberFormatException nfe) {
+				textArea.append("포트 번호를 제대로 입력해주세요\n");
+			} finally {
+				try {
+					if (dis != null)
+						dis.close();
+					if (dos != null)
+						dos.close();
+					if (socket != null)
+						socket.close();
+				} catch (IOException e1) {
+					e1.printStackTrace();
+				}
+				
 			}
 		}
 	}
 	
 	void sendMessage() {
+		
 		//입력창의 메세지 가져오기
 		String msg = input.getText();
 		input.setText("");
 		
+		//채팅창에 표시
 		textArea.append("Client> " + msg + "\n");
-		textArea.setCaretPosition(textArea.getText().length());
+		textArea.setCaretPosition(textArea.getText().length()); // 스크롤 따라가도록
 		
 		Thread thread2 = new Thread() {
 			public void run() {
 				try {
-					writer.write(msg);
-					writer.flush();
+					dos.writeUTF(msg);
+					dos.flush(); //버퍼 출력 및 비우기
+					
+				} catch(SocketException se) {
+					textArea.append("채팅이 종료되었습니다. 다시 채팅을 원한다면 재접속 해주세요.\n");
 				} catch(Exception e) {
 					e.printStackTrace();
 				}
