@@ -14,6 +14,9 @@ Repository for saving practice, assignments, and projects of 'JAVA Programming A
 ## Projects
 - StudyCafeKiosk_TextBased
 - StudyCafeKiosk_GraphicBased  
+- Week14_GUIChatting
+
+### StudyCafeKiosk_GraphicBased  
 <img width="100%" src = "https://user-images.githubusercontent.com/69065439/148991788-63fd3e03-2d7d-4ee8-9e00-5928e9e9ca1e.GIF" />
 <img width="100%" src = "https://user-images.githubusercontent.com/69065439/148991998-daab13cf-47cb-47d1-8617-63c0188c5d2a.GIF" />
 <img width="100%" src = "https://user-images.githubusercontent.com/69065439/148992009-c140c5ab-30ce-4452-a46d-85a81fb13810.GIF" />
@@ -35,7 +38,8 @@ Repository for saving practice, assignments, and projects of 'JAVA Programming A
 <img width="100%" src = "https://user-images.githubusercontent.com/69065439/148992110-e0f0489d-e4ae-454b-880d-d0b3d8bb427e.GIF" />
 <img width="100%" src = "https://user-images.githubusercontent.com/69065439/148992111-29355653-6480-4f90-9964-5015b6bca77b.GIF" />
 <img width="100%" src = "https://user-images.githubusercontent.com/69065439/148992113-69df9f32-dd4e-45ff-b070-dc96cccdbb46.GIF" />
-- Week14_GUIChatting      
+
+### Week14_GUIChatting
 <img width="100%" src = "https://user-images.githubusercontent.com/69065439/148994531-c2ff5b70-a589-47fe-b755-3dedc8571829.GIF" />
 <img width="100%" src = "https://user-images.githubusercontent.com/69065439/148994537-1e893fed-c3d5-449b-8193-078621a61208.GIF" />
 <img width="100%" src = "https://user-images.githubusercontent.com/69065439/148994539-aaab95fe-4d87-424f-8d65-f1eb3cc946c6.GIF" />
