@@ -35,8 +35,16 @@ Repository for saving practice, assignments, and projects of 'JAVA Programming A
 <img width="100%" src = "https://user-images.githubusercontent.com/69065439/148992110-e0f0489d-e4ae-454b-880d-d0b3d8bb427e.GIF" />
 <img width="100%" src = "https://user-images.githubusercontent.com/69065439/148992111-29355653-6480-4f90-9964-5015b6bca77b.GIF" />
 <img width="100%" src = "https://user-images.githubusercontent.com/69065439/148992113-69df9f32-dd4e-45ff-b070-dc96cccdbb46.GIF" />
-
-
-
-
 - Week14_GUIChatting
+<img width="100%" src = "https://user-images.githubusercontent.com/69065439/148994531-c2ff5b70-a589-47fe-b755-3dedc8571829.GIF" />
+<img width="100%" src = "https://user-images.githubusercontent.com/69065439/148994537-1e893fed-c3d5-449b-8193-078621a61208.GIF" />
+<img width="100%" src = "https://user-images.githubusercontent.com/69065439/148994539-aaab95fe-4d87-424f-8d65-f1eb3cc946c6.GIF" />
+<img width="100%" src = "https://user-images.githubusercontent.com/69065439/148994543-b814f52d-c92e-496e-857b-76525b74737a.GIF" />
+<img width="100%" src = "https://user-images.githubusercontent.com/69065439/148994546-ac7b7416-a8f0-4b04-a6f8-6e86f9cb3f61.GIF" />
+<img width="100%" src = "https://user-images.githubusercontent.com/69065439/148994548-2a250fe5-0073-446d-b377-b2251175c03c.GIF" />
+<img width="100%" src = "https://user-images.githubusercontent.com/69065439/148994550-39946d22-3797-43af-a436-615ee0bc6c15.GIF" />
+<img width="100%" src = "https://user-images.githubusercontent.com/69065439/148994551-5829dfba-1a15-43d7-a6cd-a9def7715c6e.GIF" />
+<img width="100%" src = "https://user-images.githubusercontent.com/69065439/148994552-9d234691-3345-4869-ac0e-e220a31cda84.GIF" />
+<img width="100%" src = "https://user-images.githubusercontent.com/69065439/148994553-5402102b-7a29-4bc1-8d5d-e48008f11ef5.GIF" />
+<img width="100%" src = "https://user-images.githubusercontent.com/69065439/148994554-0d934646-c0ba-4996-a5c2-f425e3b843f4.GIF" />
+<img width="100%" src = "https://user-images.githubusercontent.com/69065439/148994556-9145dde3-ec43-4c21-8ab3-d8e64773e80c.GIF" />
